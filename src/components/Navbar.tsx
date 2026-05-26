@@ -16,7 +16,7 @@ export default function Navbar() {
     if (!mounted) return null;
 
     return (
-        <nav className="bg-white/80 backdrop-blur-md sticky top-0 z-50 border-b border-slate-200 shadow-sm">
+        <nav className="bg-white/90 backdrop-blur-md fixed top-0 w-full z-50 border-b border-slate-200 shadow-sm transition-all">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between h-16 items-center">
                     <Link href="/" className="flex items-center gap-2 text-emerald-600 font-bold text-xl">
@@ -25,6 +25,15 @@ export default function Navbar() {
                     </Link>
                     
                     <div className="flex items-center gap-6">
+                        {!isAuthenticated && (
+                            <div className="hidden md:flex items-center gap-6 mr-4">
+                                <a href="/#home" className="text-slate-600 hover:text-emerald-600 font-medium text-sm transition">Home</a>
+                                <a href="/#features" className="text-slate-600 hover:text-emerald-600 font-medium text-sm transition">Features</a>
+                                <a href="/#statistics" className="text-slate-600 hover:text-emerald-600 font-medium text-sm transition">Statistics</a>
+                                <a href="/#how-it-works" className="text-slate-600 hover:text-emerald-600 font-medium text-sm transition">Guide</a>
+                            </div>
+                        )}
+                        
                         {isAuthenticated ? (
                             <>
                                 {user?.role === 'admin' && (
@@ -45,10 +54,10 @@ export default function Navbar() {
                                 </div>
                             </>
                         ) : (
-                            <>
-                                <Link href="/login" className="text-slate-600 hover:text-emerald-600 font-medium">Login</Link>
-                                <Link href="/register" className="bg-emerald-600 text-white px-5 py-2 rounded-full font-medium hover:bg-emerald-700 transition shadow-md shadow-emerald-200">Register</Link>
-                            </>
+                            <div className="flex items-center gap-3 border-l border-slate-200 pl-4">
+                                <Link href="/login" className="text-slate-600 hover:text-emerald-600 font-medium text-sm transition">Login</Link>
+                                <Link href="/register" className="bg-emerald-600 text-white px-5 py-2 rounded-full font-medium text-sm hover:bg-emerald-700 transition shadow-md shadow-emerald-200">Register</Link>
+                            </div>
                         )}
                     </div>
                 </div>
