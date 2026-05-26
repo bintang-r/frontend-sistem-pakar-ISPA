@@ -2,15 +2,8 @@
 import Link from 'next/link';
 import { ArrowRight, Search, Zap, Activity, BarChart3, ShieldCheck, Database, FileText, ChevronRight, Stethoscope, Phone, Video } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, AreaChart, Area } from 'recharts';
-import { useState } from 'react';
-
-const dummyAgeData = [
-  { name: 'Balita (0-5)', cases: 420 },
-  { name: 'Anak (6-12)', cases: 310 },
-  { name: 'Remaja (13-18)', cases: 150 },
-  { name: 'Dewasa (19-50)', cases: 280 },
-  { name: 'Lansia (>50)', cases: 390 },
-];
+import { useState, useEffect } from 'react';
+import api from '@/lib/api';
 
 const accuracyData = [
   { month: 'Jan', accuracy: 85 },
@@ -23,6 +16,15 @@ const accuracyData = [
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState('Gejala Umum');
+  
+  // Dynamic states
+  const [stats, setStats] = useState<{ total_patients: number | null, total_consultations: number, disease_distribution: any[], avg_confidence: number, recent_avatars: {name: string, avatar: string}[] }>({ total_patients: null, total_consultations: 0, disease_distribution: [], avg_confidence: 90, recent_avatars: [] });
+  const [testimonials, setTestimonials] = useState<any[]>([]);
+
+  useEffect(() => {
+    api.get('statistics/').then(res => setStats(res.data)).catch(console.error);
+    api.get('testimonials/').then(res => setTestimonials(res.data)).catch(console.error);
+  }, []);
 
   const tabsData: Record<string, any> = {
     'Gejala Umum': {
@@ -70,13 +72,37 @@ export default function Home() {
                 <Search className="w-5 h-5"/> Masuk Akun
               </Link>
             </div>
-            <div className="flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start bg-white/50 backdrop-blur-sm w-fit p-3 pr-6 rounded-full border border-teal-100 mx-auto lg:mx-0">
-              <div className="flex -space-x-3">
-                {[1,2,3,4].map(i => <div key={i} className="w-10 h-10 rounded-full border-2 border-white bg-slate-200 shadow-sm" style={{backgroundImage: `url(https://i.pravatar.cc/100?img=${i+10})`, backgroundSize: 'cover'}}></div>)}
-                <div className="w-10 h-10 rounded-full border-2 border-white bg-teal-100 text-teal-600 flex items-center justify-center font-bold text-xs shadow-sm">+</div>
+            {/* User count pill — only shown once data is loaded */}
+            {stats.total_patients !== null && stats.total_patients > 0 && (
+              <div className="flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start bg-white/50 backdrop-blur-sm w-fit p-3 pr-6 rounded-full border border-teal-100 mx-auto lg:mx-0">
+                {/* Avatar stack — show real photos if available, else generic initials */}
+                <div className="flex -space-x-3">
+                  {stats.recent_avatars.length > 0 ? (
+                    stats.recent_avatars.map((u, i) => (
+                      <div
+                        key={i}
+                        title={u.name}
+                        className="w-10 h-10 rounded-full border-2 border-white bg-teal-100 shadow-sm overflow-hidden"
+                      >
+                        <img src={u.avatar} alt={u.name} className="w-full h-full object-cover" />
+                      </div>
+                    ))
+                  ) : (
+                    // Fallback generic avatars when no user has uploaded a photo yet
+                    [1,2,3,4].map(i => (
+                      <div key={i} className="w-10 h-10 rounded-full border-2 border-white bg-slate-200 flex items-center justify-center text-slate-500 text-xs font-bold shadow-sm">
+                        {String.fromCharCode(64 + i)}
+                      </div>
+                    ))
+                  )}
+                  <div className="w-10 h-10 rounded-full border-2 border-white bg-teal-100 text-teal-600 flex items-center justify-center font-bold text-xs shadow-sm">+</div>
+                </div>
+                <p className="text-sm font-semibold text-slate-700">
+                  <span>{stats.total_patients.toLocaleString('id-ID')}+</span>{' '}Pengguna<br/>
+                  <span className="text-slate-500 font-normal">Terdaftar di aplikasi</span>
+                </p>
               </div>
-              <p className="text-sm font-semibold text-slate-700">95K+ Pasien<br/><span className="text-slate-500 font-normal">Telah terbantu</span></p>
-            </div>
+            )}
           </div>
 
           {/* Right Image */}
@@ -97,7 +123,7 @@ export default function Home() {
                     </div>
                     <div>
                         <p className="text-xs text-slate-500 font-bold uppercase tracking-wider">Akurasi Sistem</p>
-                        <p className="text-lg font-extrabold text-slate-900">95%+</p>
+                        <p className="text-lg font-extrabold text-slate-900">{stats.avg_confidence > 0 ? stats.avg_confidence : 95}%+</p>
                     </div>
                 </div>
 
@@ -208,25 +234,29 @@ export default function Home() {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h3 className="text-3xl md:text-4xl font-extrabold text-slate-900 mb-2">Statistik <span className="text-teal-600">Sistem</span></h3>
-            <p className="text-slate-500">Distribusi kerentanan dan akurasi diagnosis kami</p>
+            <p className="text-slate-500">Distribusi kerentanan dan akurasi diagnosis dari {stats.total_consultations} konsultasi riil kami</p>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
             <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm hover:shadow-lg transition duration-300">
               <div className="flex items-center gap-3 mb-6">
                 <BarChart3 className="text-teal-600 w-6 h-6" />
-                <h4 className="text-xl font-bold text-slate-800">Kasus ISPA per Kelompok Usia</h4>
+                <h4 className="text-xl font-bold text-slate-800">Distribusi Penyakit Terdeteksi</h4>
               </div>
               <div className="h-72 w-full">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={dummyAgeData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
-                    <XAxis dataKey="name" tick={{fontSize: 12, fill: '#64748b'}} axisLine={false} tickLine={false} />
-                    <YAxis tick={{fontSize: 12, fill: '#64748b'}} axisLine={false} tickLine={false} />
-                    <RechartsTooltip cursor={{fill: '#f1f5f9'}} contentStyle={{borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'}} />
-                    <Bar dataKey="cases" fill="#14b8a6" radius={[6, 6, 0, 0]} />
-                  </BarChart>
-                </ResponsiveContainer>
+                {stats.disease_distribution.length > 0 ? (
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={stats.disease_distribution} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
+                      <XAxis dataKey="name" tick={{fontSize: 10, fill: '#64748b'}} axisLine={false} tickLine={false} />
+                      <YAxis tick={{fontSize: 12, fill: '#64748b'}} axisLine={false} tickLine={false} />
+                      <RechartsTooltip cursor={{fill: '#f1f5f9'}} contentStyle={{borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'}} />
+                      <Bar dataKey="cases" fill="#14b8a6" radius={[6, 6, 0, 0]} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-slate-400">Belum ada data konsultasi</div>
+                )}
               </div>
             </div>
 
@@ -286,23 +316,29 @@ export default function Home() {
             <h3 className="text-3xl md:text-4xl font-extrabold text-slate-900 mb-2">Apa Kata <span className="text-teal-600">Pasien Kami</span></h3>
             <p className="text-slate-500">Ribuan orang telah terbantu dengan deteksi dini ISPA.</p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {['Sangat membantu! Saya bisa langsung tahu penanganan awal untuk anak saya yang sedang batuk pilek hebat tanpa harus panik ke UGD tengah malam.', 'Sistemnya sangat akurat. Hasil diagnosisnya sama persis dengan yang dikatakan dokter saat saya periksa keesokan harinya.', 'Mudah digunakan dan sangat informatif. Saya jadi lebih waspada terhadap komplikasi ISPA. Terima kasih ISPADiag!'].map((text, i) => (
-              <div key={i} className="bg-white rounded-3xl p-8 shadow-sm border border-slate-100 flex flex-col">
-                <div className="flex text-amber-400 mb-4">
-                  {[1,2,3,4,5].map(star => <svg key={star} className="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21L16.54 13.97L22 9.24L14.81 8.63L12 2L9.19 8.63L2 9.24L7.46 13.97L5.82 21L12 17.27Z"/></svg>)}
-                </div>
-                <p className="text-slate-600 italic mb-6 flex-1">"{text}"</p>
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-full bg-teal-100" style={{backgroundImage: `url(https://i.pravatar.cc/100?img=${i+25})`, backgroundSize: 'cover'}}></div>
-                  <div>
-                    <h5 className="font-bold text-slate-900 text-sm">{i === 0 ? 'Rina M.' : i === 1 ? 'Ahmad F.' : 'Diana K.'}</h5>
-                    <p className="text-xs text-slate-500">Pasien</p>
+          {testimonials.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {testimonials.slice(0, 6).map((testi, i) => (
+                <div key={testi.id || i} className="bg-white rounded-3xl p-8 shadow-sm border border-slate-100 flex flex-col">
+                  <div className="flex text-amber-400 mb-4">
+                    {Array.from({ length: testi.rating || 5 }).map((_, idx) => <svg key={idx} className="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21L16.54 13.97L22 9.24L14.81 8.63L12 2L9.19 8.63L2 9.24L7.46 13.97L5.82 21L12 17.27Z"/></svg>)}
+                  </div>
+                  <p className="text-slate-600 italic mb-6 flex-1">"{testi.content}"</p>
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-full bg-teal-100" style={{backgroundImage: `url(https://i.pravatar.cc/100?img=${i+25})`, backgroundSize: 'cover'}}></div>
+                    <div>
+                      <h5 className="font-bold text-slate-900 text-sm">{testi.user_name}</h5>
+                      <p className="text-xs text-slate-500">{new Date(testi.created_at).toLocaleDateString()}</p>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center text-slate-500 p-12 bg-white rounded-3xl border border-slate-100">
+               Belum ada ulasan dari pasien. Lakukan konsultasi pertama Anda!
+            </div>
+          )}
         </div>
       </section>
 
