@@ -20,20 +20,19 @@ export default function Dashboard() {
                     <h1 className="text-3xl font-bold text-slate-900">Dashboard</h1>
                     <p className="text-slate-500 mt-1">Welcome back, {user?.full_name}</p>
                 </div>
-                <Link href="/consultation" className="bg-blue-600 text-white px-6 py-3 rounded-full font-semibold hover:bg-blue-700 transition flex items-center gap-2 shadow-lg shadow-blue-200">
+                <Link href="/consultation" className="bg-emerald-600 text-white px-6 py-3 rounded-full font-semibold hover:bg-emerald-700 transition flex items-center gap-2 shadow-lg shadow-emerald-200">
                     <PlusCircle className="w-5 h-5" /> New Consultation
                 </Link>
             </header>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-4">
-                    <div className="w-12 h-12 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center"><Activity /></div>
+                    <div className="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-xl flex items-center justify-center"><Activity /></div>
                     <div>
                         <p className="text-sm font-medium text-slate-500">Total Consultations</p>
                         <h2 className="text-2xl font-bold text-slate-900">{history.length}</h2>
                     </div>
                 </div>
-                {/* Additional stats cards could go here */}
             </div>
 
             <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
@@ -57,7 +56,7 @@ export default function Dashboard() {
                                             <p className="text-sm text-slate-500">{new Date(item.consultation_date).toLocaleString()}</p>
                                         </div>
                                     </div>
-                                    <span className="font-bold text-blue-600 bg-blue-50 px-3 py-1 rounded-full text-sm">
+                                    <span className="font-bold text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full text-sm">
                                         {item.confidence_result}%
                                     </span>
                                 </div>

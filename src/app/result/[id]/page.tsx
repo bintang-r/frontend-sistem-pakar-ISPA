@@ -13,7 +13,7 @@ export default function Result() {
         api.get(`consultations/${id}/`).then(res => setResult(res.data)).catch(console.error);
     }, [id]);
 
-    if (!result) return <div className="flex justify-center p-20"><div className="animate-spin w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full"></div></div>;
+    if (!result) return <div className="flex justify-center p-20"><div className="animate-spin w-8 h-8 border-4 border-emerald-600 border-t-transparent rounded-full"></div></div>;
 
     const topDiagnosis = result.diagnosis_results?.[0];
 
@@ -24,9 +24,9 @@ export default function Result() {
             </button>
             
             <div className="bg-white rounded-3xl shadow-xl shadow-slate-200/50 overflow-hidden border border-slate-100 mb-8 print:shadow-none print:border-none">
-                <div className="bg-gradient-to-r from-blue-600 to-cyan-500 p-8 md:p-12 text-white text-center">
+                <div className="bg-gradient-to-r from-emerald-600 to-teal-500 p-8 md:p-12 text-white text-center">
                     <ShieldCheck className="w-16 h-16 mx-auto mb-4 opacity-90" />
-                    <h2 className="text-lg font-medium text-blue-100 mb-2">Diagnosis Result</h2>
+                    <h2 className="text-lg font-medium text-emerald-100 mb-2">Diagnosis Result</h2>
                     <h1 className="text-4xl md:text-5xl font-extrabold mb-4">{result.final_diagnosis}</h1>
                     <div className="inline-block bg-white/20 backdrop-blur-md px-6 py-2 rounded-full font-bold text-2xl border border-white/30">
                         {result.confidence_result}% Confidence
@@ -36,9 +36,9 @@ export default function Result() {
                 <div className="p-8 md:p-12">
                     <div className="mb-10">
                         <h3 className="text-xl font-bold text-slate-900 flex items-center gap-2 mb-4">
-                            <Info className="w-6 h-6 text-blue-500" /> Recommendation
+                            <Info className="w-6 h-6 text-emerald-500" /> Recommendation
                         </h3>
-                        <div className="bg-blue-50 border border-blue-100 p-6 rounded-2xl text-blue-900 leading-relaxed text-lg">
+                        <div className="bg-emerald-50 border border-emerald-100 p-6 rounded-2xl text-emerald-900 leading-relaxed text-lg">
                             {topDiagnosis?.recommendation || "Consult a healthcare professional for a precise recommendation."}
                         </div>
                     </div>

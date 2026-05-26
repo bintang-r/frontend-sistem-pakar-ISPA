@@ -46,7 +46,7 @@ export default function Consultation() {
     return (
         <div className="max-w-4xl mx-auto">
             <div className="text-center mb-10">
-                <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-blue-100 text-blue-600 mb-4">
+                <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-emerald-100 text-emerald-600 mb-4">
                     <Activity className="w-8 h-8" />
                 </div>
                 <h1 className="text-4xl font-extrabold text-slate-900 mb-2">Symptom Checklist</h1>
@@ -56,10 +56,10 @@ export default function Consultation() {
             <form onSubmit={handleSubmit} className="bg-white rounded-3xl shadow-xl shadow-slate-200/50 p-6 md:p-10 border border-slate-100">
                 <div className="space-y-4 mb-10">
                     {symptoms.map(symp => (
-                        <div key={symp.id} className="border border-slate-200 rounded-2xl p-4 hover:border-blue-300 transition bg-slate-50/50">
+                        <div key={symp.id} className="border border-slate-200 rounded-2xl p-4 hover:border-emerald-300 transition bg-slate-50/50">
                             <div className="flex justify-between items-center mb-3">
                                 <span className="font-semibold text-slate-800 text-lg flex items-center gap-2">
-                                    {selected[symp.id] ? <CheckCircle2 className="w-5 h-5 text-blue-500" /> : <div className="w-5 h-5 border-2 border-slate-300 rounded-full" />}
+                                    {selected[symp.id] ? <CheckCircle2 className="w-5 h-5 text-emerald-500" /> : <div className="w-5 h-5 border-2 border-slate-300 rounded-full" />}
                                     {symp.name}
                                 </span>
                             </div>
@@ -71,7 +71,7 @@ export default function Consultation() {
                                         onClick={() => toggleSymptom(symp.id, sev.value)}
                                         className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
                                             selected[symp.id] === sev.value
-                                                ? 'bg-blue-600 text-white shadow-md shadow-blue-200 ring-2 ring-blue-600 ring-offset-2'
+                                                ? 'bg-emerald-600 text-white shadow-md shadow-emerald-200 ring-2 ring-emerald-600 ring-offset-2'
                                                 : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-100'
                                         }`}
                                     >
@@ -84,7 +84,7 @@ export default function Consultation() {
                 </div>
 
                 <div className="sticky bottom-4">
-                    <button type="submit" className="w-full bg-blue-600 text-white py-4 rounded-2xl font-bold text-lg hover:bg-blue-700 transition-all shadow-xl shadow-blue-200 flex items-center justify-center gap-2 group">
+                    <button type="submit" className="w-full bg-emerald-600 text-white py-4 rounded-2xl font-bold text-lg hover:bg-emerald-700 transition-all shadow-xl shadow-emerald-200 flex items-center justify-center gap-2 group">
                         Diagnose Now <ChevronRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
                     </button>
                 </div>
