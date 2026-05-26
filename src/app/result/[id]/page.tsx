@@ -18,7 +18,7 @@ export default function Result() {
     const topDiagnosis = result.diagnosis_results?.[0];
 
     return (
-        <div className="max-w-3xl mx-auto mt-8">
+        <div className="max-w-3xl mx-auto px-4 md:px-8 py-8">
             <button onClick={() => router.push('/dashboard')} className="mb-6 flex items-center gap-2 text-slate-500 hover:text-slate-800 font-medium transition">
                 <ArrowLeft className="w-5 h-5" /> Back to Dashboard
             </button>

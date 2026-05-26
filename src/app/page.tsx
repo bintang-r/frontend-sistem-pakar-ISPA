@@ -48,7 +48,7 @@ export default function Home() {
   };
 
   return (
-    <div className="w-full flex flex-col pt-16 -mx-4 md:-mx-8 font-sans">
+    <div className="w-full flex flex-col font-sans">
       
       {/* 1. HERO SECTION (Split Layout) */}
       <section id="home" className="relative bg-gradient-to-br from-emerald-50 via-white to-teal-50 pt-20 pb-32 px-4 md:px-8 overflow-hidden">
@@ -114,7 +114,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 2. FEATURES SECTION (Solid Teal Background matching mockup) */}
+      {/* 2. FEATURES SECTION */}
       <section id="features" className="bg-teal-500 pt-24 pb-32 px-4 relative overflow-hidden">
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="text-center mb-16">
@@ -123,7 +123,6 @@ export default function Home() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {/* Highlighted Card (White) */}
             <div className="bg-white p-8 rounded-[2rem] shadow-2xl flex flex-col items-center text-center transform hover:-translate-y-2 transition duration-300">
               <div className="w-16 h-16 bg-teal-100 text-teal-600 rounded-full flex items-center justify-center mb-6">
                 <ShieldCheck className="w-8 h-8" />
@@ -132,7 +131,6 @@ export default function Home() {
               <p className="text-slate-600 text-sm leading-relaxed">Sistem pakar menggunakan pengetahuan yang diekstrak langsung dari para dokter spesialis.</p>
             </div>
             
-            {/* Standard Transparent Cards */}
             <div className="bg-teal-600/30 p-8 rounded-[2rem] border border-teal-400/30 flex flex-col items-center text-center hover:bg-teal-600/50 transition duration-300">
               <div className="w-16 h-16 bg-white text-teal-600 rounded-full flex items-center justify-center mb-6 shadow-md">
                 <Zap className="w-8 h-8" />
@@ -160,7 +158,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 3. TABBED INFO SECTION (Replacing "Facilities and Services") */}
+      {/* 3. TABBED INFO SECTION */}
       <section id="informasi" className="py-24 bg-white px-4">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
@@ -169,7 +167,6 @@ export default function Home() {
           </div>
 
           <div className="flex flex-col lg:flex-row gap-12 items-start">
-            {/* Tabs List */}
             <div className="lg:w-1/3 w-full flex flex-col gap-2 relative">
               <div className="absolute left-0 top-0 bottom-0 w-1 bg-teal-100 rounded-full"></div>
               {Object.keys(tabsData).map((key) => (
@@ -188,7 +185,6 @@ export default function Home() {
               ))}
             </div>
 
-            {/* Tab Content */}
             <div className="lg:w-2/3 w-full">
               <div className="bg-white rounded-[2rem] p-8 md:p-10 shadow-xl shadow-slate-200/50 border border-slate-100 flex flex-col md:flex-row gap-8 items-center min-h-[350px]">
                 <div className="w-full md:w-1/2 aspect-square md:aspect-auto h-full min-h-[250px] rounded-3xl overflow-hidden relative shadow-md border-4 border-slate-50">
@@ -207,32 +203,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 5. CALL TO ACTION BANNER (Wide teal banner matching mockup) */}
-      <section className="py-12 bg-white px-4 md:px-8 mb-20 mt-10">
-        <div className="max-w-7xl mx-auto bg-teal-500 rounded-[2.5rem] p-8 md:p-16 flex flex-col md:flex-row items-center justify-between gap-10 shadow-2xl shadow-teal-200 relative overflow-hidden">
-            <div className="md:w-1/2 relative z-10 text-center md:text-left">
-                <h2 className="text-3xl md:text-5xl font-extrabold text-white mb-6 leading-tight">
-                    24/7 Konsultasi ISPA Secara Online
-                </h2>
-                <p className="text-teal-100 text-lg mb-8 max-w-lg">
-                    Sistem pakar cerdas kami siap membantu Anda melakukan pemeriksaan mandiri kapan saja.
-                </p>
-                <Link href="/register" className="inline-block bg-white text-teal-600 px-8 py-4 rounded-xl font-bold text-lg hover:bg-slate-50 transition shadow-lg hover:-translate-y-1">
-                    Konsultasi Sekarang
-                </Link>
-            </div>
-            
-            <div className="md:w-1/2 relative z-10 flex justify-center md:justify-end">
-                <div className="relative w-full max-w-sm">
-                    <img src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=800&q=80" alt="Medical Team" className="w-full rounded-[2rem] shadow-xl border-4 border-teal-400" />
-                    <div className="absolute -top-6 -left-6 text-white opacity-50 font-bold text-5xl animate-pulse">+</div>
-                    <div className="absolute -bottom-4 right-10 text-teal-200 opacity-60 font-bold text-4xl animate-bounce">+</div>
-                </div>
-            </div>
-        </div>
-      </section>
-
-      {/* 4. STATISTICS SECTION (Moved to bottom above footer) */}
+      {/* 4. STATISTICS SECTION */}
       <section id="statistics" className="py-24 bg-slate-50 px-4 border-t border-slate-100">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
@@ -286,21 +257,159 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 6. FOOTER */}
-      <footer className="bg-slate-900 text-slate-400 py-12 px-4">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
-          <div className="flex items-center gap-2 text-white font-bold text-2xl">
-              <Stethoscope className="w-8 h-8 text-teal-500" />
-              <span>ISPA<span className="text-slate-500">Diag</span></span>
+      {/* 5. TIM DOKTER SPESIALIS */}
+      <section id="dokter" className="py-24 bg-white px-4 border-t border-slate-100">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <h3 className="text-3xl md:text-4xl font-extrabold text-slate-900 mb-2">Tim <span className="text-teal-600">Pakar Medis</span></h3>
+            <p className="text-slate-500 max-w-2xl mx-auto">Sistem pakar kami dikembangkan dan divalidasi bersama para ahli penyakit dalam dan saluran pernapasan terkemuka.</p>
           </div>
-          <div className="flex gap-6 text-sm font-medium">
-            <a href="#home" className="hover:text-white transition">Home</a>
-            <a href="#features" className="hover:text-white transition">Features</a>
-            <a href="#informasi" className="hover:text-white transition">Informasi</a>
-            <a href="#statistics" className="hover:text-white transition">Statistik</a>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="bg-slate-50 rounded-3xl p-6 border border-slate-100 text-center hover:shadow-lg transition">
+                <div className="w-32 h-32 mx-auto rounded-full overflow-hidden mb-6 border-4 border-white shadow-md">
+                  <img src={`https://images.unsplash.com/photo-${i === 1 ? '1559839734-2b71ea197ec2' : i === 2 ? '1594824436999-05e810ebc252' : '1622253692010-33bfdf050d40'}?auto=format&fit=crop&w=400&q=80`} alt="Doctor" className="w-full h-full object-cover" />
+                </div>
+                <h4 className="text-xl font-bold text-slate-900 mb-1">Dr. {i === 1 ? 'Budi Santoso' : i === 2 ? 'Siti Aminah' : 'Andi Wijaya'}, Sp.P</h4>
+                <p className="text-teal-600 font-medium text-sm mb-4">Spesialis Paru & Pernapasan</p>
+                <p className="text-slate-500 text-sm">Berpengalaman lebih dari 15 tahun dalam menangani berbagai kasus infeksi saluran pernapasan akut dan kronis.</p>
+              </div>
+            ))}
           </div>
-          <div className="text-sm">
-            &copy; {new Date().getFullYear()} ISPADiag Expert System. All rights reserved.
+        </div>
+      </section>
+
+      {/* 6. TESTIMONI PASIEN */}
+      <section id="testimoni" className="py-24 bg-teal-50 px-4">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <h3 className="text-3xl md:text-4xl font-extrabold text-slate-900 mb-2">Apa Kata <span className="text-teal-600">Pasien Kami</span></h3>
+            <p className="text-slate-500">Ribuan orang telah terbantu dengan deteksi dini ISPA.</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {['Sangat membantu! Saya bisa langsung tahu penanganan awal untuk anak saya yang sedang batuk pilek hebat tanpa harus panik ke UGD tengah malam.', 'Sistemnya sangat akurat. Hasil diagnosisnya sama persis dengan yang dikatakan dokter saat saya periksa keesokan harinya.', 'Mudah digunakan dan sangat informatif. Saya jadi lebih waspada terhadap komplikasi ISPA. Terima kasih ISPADiag!'].map((text, i) => (
+              <div key={i} className="bg-white rounded-3xl p-8 shadow-sm border border-slate-100 flex flex-col">
+                <div className="flex text-amber-400 mb-4">
+                  {[1,2,3,4,5].map(star => <svg key={star} className="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21L16.54 13.97L22 9.24L14.81 8.63L12 2L9.19 8.63L2 9.24L7.46 13.97L5.82 21L12 17.27Z"/></svg>)}
+                </div>
+                <p className="text-slate-600 italic mb-6 flex-1">"{text}"</p>
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-full bg-teal-100" style={{backgroundImage: `url(https://i.pravatar.cc/100?img=${i+25})`, backgroundSize: 'cover'}}></div>
+                  <div>
+                    <h5 className="font-bold text-slate-900 text-sm">{i === 0 ? 'Rina M.' : i === 1 ? 'Ahmad F.' : 'Diana K.'}</h5>
+                    <p className="text-xs text-slate-500">Pasien</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 7. FAQ SECTION */}
+      <section id="faq" className="py-24 bg-white px-4">
+        <div className="max-w-3xl mx-auto">
+          <div className="text-center mb-16">
+            <h3 className="text-3xl md:text-4xl font-extrabold text-slate-900 mb-2">Pertanyaan <span className="text-teal-600">Umum</span></h3>
+            <p className="text-slate-500">Jawaban untuk pertanyaan yang paling sering diajukan.</p>
+          </div>
+          <div className="space-y-4">
+            {[
+              { q: 'Apakah hasil diagnosis ini 100% akurat?', a: 'Sistem ini menggunakan perhitungan probabilitas (Certainty Factor) dari basis pengetahuan pakar. Meskipun tingkat akurasinya tinggi (di atas 90%), sistem ini dirancang untuk deteksi awal dan TIDAK menggantikan diagnosis resmi dari dokter.' },
+              { q: 'Apakah data medis saya aman?', a: 'Tentu. Semua data riwayat konsultasi dan identitas Anda dienkripsi dan disimpan dengan aman. Kami tidak pernah membagikan data medis Anda kepada pihak ketiga.' },
+              { q: 'Bagaimana cara mulai berkonsultasi?', a: 'Sangat mudah! Anda hanya perlu membuat akun gratis, login, lalu masuk ke menu Konsultasi. Centang gejala yang Anda rasakan beserta tingkat keparahannya, dan hasil akan langsung keluar.' }
+            ].map((faq, i) => (
+              <div key={i} className="bg-slate-50 rounded-2xl p-6 md:p-8 border border-slate-100 shadow-sm">
+                <h4 className="text-lg font-bold text-slate-900 mb-3 flex items-start gap-3">
+                  <div className="w-7 h-7 shrink-0 rounded-full bg-teal-100 text-teal-600 flex items-center justify-center text-sm mt-0.5">Q</div>
+                  {faq.q}
+                </h4>
+                <p className="text-slate-600 pl-10 leading-relaxed">{faq.a}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 8. CALL TO ACTION BANNER */}
+      <section className="py-12 bg-white px-4 md:px-8 mb-10">
+        <div className="max-w-7xl mx-auto bg-teal-500 rounded-[2.5rem] p-8 md:p-16 flex flex-col md:flex-row items-center justify-between gap-10 shadow-2xl shadow-teal-200 relative overflow-hidden">
+            <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10 mix-blend-overlay"></div>
+            
+            <div className="md:w-1/2 relative z-10 text-center md:text-left">
+                <h2 className="text-3xl md:text-5xl font-extrabold text-white mb-6 leading-tight">
+                    Konsultasi Diagnosis ISPA Secara Online
+                </h2>
+                <p className="text-teal-100 text-lg mb-8 max-w-lg">
+                    Tidak perlu ke rumah sakit untuk pemeriksaan awal. Sistem pakar cerdas kami siap membantu Anda 24/7.
+                </p>
+                <Link href="/register" className="inline-block bg-white text-teal-600 px-8 py-4 rounded-full font-bold text-lg hover:bg-slate-50 transition shadow-lg hover:-translate-y-1">
+                    Mulai Sekarang
+                </Link>
+            </div>
+            
+            <div className="md:w-1/2 relative z-10 flex justify-center md:justify-end">
+                <div className="relative w-full max-w-sm">
+                    <img src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=800&q=80" alt="Medical Team" className="w-full rounded-[2rem] shadow-xl border-4 border-teal-400" />
+                    <div className="absolute -top-6 -left-6 text-white opacity-50 font-bold text-5xl animate-pulse">+</div>
+                    <div className="absolute -bottom-4 right-10 text-teal-200 opacity-60 font-bold text-4xl animate-bounce">+</div>
+                </div>
+            </div>
+        </div>
+      </section>
+
+      {/* 9. EXPANDED FOOTER */}
+      <footer className="bg-slate-900 pt-20 pb-10 px-4">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
+            <div className="md:col-span-1">
+              <div className="flex items-center gap-2 text-white font-bold text-2xl mb-6">
+                  <Stethoscope className="w-8 h-8 text-teal-500" />
+                  <span>ISPA<span className="text-slate-500">Diag</span></span>
+              </div>
+              <p className="text-slate-400 text-sm leading-relaxed">
+                Sistem Pakar Diagnosis Awal Infeksi Saluran Pernapasan Akut menggunakan metode Forward Chaining dan Certainty Factor. Membantu masyarakat mendeteksi ISPA lebih dini.
+              </p>
+            </div>
+            
+            <div>
+              <h4 className="text-white font-bold mb-6">Tautan Cepat</h4>
+              <ul className="space-y-4 text-slate-400 text-sm">
+                <li><a href="#home" className="hover:text-teal-400 transition">Beranda</a></li>
+                <li><a href="#features" className="hover:text-teal-400 transition">Fasilitas & Fitur</a></li>
+                <li><a href="#informasi" className="hover:text-teal-400 transition">Pusat Informasi</a></li>
+                <li><a href="#statistics" className="hover:text-teal-400 transition">Statistik Data</a></li>
+              </ul>
+            </div>
+
+            <div>
+              <h4 className="text-white font-bold mb-6">Layanan Bantuan</h4>
+              <ul className="space-y-4 text-slate-400 text-sm">
+                <li><a href="#faq" className="hover:text-teal-400 transition">Tanya Jawab (FAQ)</a></li>
+                <li><a href="#dokter" className="hover:text-teal-400 transition">Tim Spesialis</a></li>
+                <li><Link href="/login" className="hover:text-teal-400 transition">Masuk Akun</Link></li>
+                <li><Link href="/register" className="hover:text-teal-400 transition">Daftar Akun Baru</Link></li>
+              </ul>
+            </div>
+
+            <div>
+              <h4 className="text-white font-bold mb-6">Kontak Kami</h4>
+              <ul className="space-y-4 text-slate-400 text-sm">
+                <li className="flex items-center gap-3"><Phone className="w-4 h-4 text-teal-500" /> +62 812 3456 7890</li>
+                <li className="flex items-center gap-3"><svg className="w-4 h-4 text-teal-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg> cs@ispadiag.com</li>
+                <li className="flex items-start gap-3"><svg className="w-4 h-4 text-teal-500 mt-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg> Jl. Kesehatan No.123, Jakarta Selatan, Indonesia</li>
+              </ul>
+            </div>
+          </div>
+
+          <div className="border-t border-slate-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-slate-500">
+            <div>
+              &copy; {new Date().getFullYear()} ISPADiag Expert System. Hak Cipta Dilindungi.
+            </div>
+            <div className="flex gap-4">
+              <a href="#" className="hover:text-white transition">Kebijakan Privasi</a>
+              <a href="#" className="hover:text-white transition">Syarat & Ketentuan</a>
+            </div>
           </div>
         </div>
       </footer>

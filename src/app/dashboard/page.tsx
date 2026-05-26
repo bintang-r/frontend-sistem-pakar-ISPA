@@ -14,7 +14,7 @@ export default function Dashboard() {
     }, []);
 
     return (
-        <div className="max-w-6xl mx-auto space-y-8">
+        <div className="max-w-6xl mx-auto space-y-8 px-4 md:px-8 py-8">
             <header className="flex justify-between items-end pb-6 border-b border-slate-200">
                 <div>
                     <h1 className="text-3xl font-bold text-slate-900">Dashboard</h1>

@@ -19,7 +19,7 @@ export default function RootLayout({
     <html lang="en" className="scroll-smooth">
       <body className={`${inter.className} bg-slate-50 text-slate-900 min-h-screen flex flex-col`}>
         <Navbar />
-        <main className="flex-1 w-full max-w-7xl mx-auto p-4 md:p-8">
+        <main className="flex-1 w-full pt-20">
           {children}
         </main>
       </body>

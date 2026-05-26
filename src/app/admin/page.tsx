@@ -37,7 +37,7 @@ export default function AdminDashboard() {
     };
 
     return (
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row gap-8">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row gap-8 px-4 md:px-8 py-8">
             {/* Sidebar */}
             <div className="w-full md:w-64 shrink-0 space-y-2">
                 <div className="mb-6 p-4 bg-emerald-50 rounded-xl border border-emerald-100 flex items-center gap-3 text-emerald-800 font-bold">
