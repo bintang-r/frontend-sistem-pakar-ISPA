@@ -1,65 +1,57 @@
-import Image from "next/image";
+import Link from 'next/link';
+import { ArrowRight, ShieldCheck, Zap, Activity } from 'lucide-react';
 
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className="flex flex-col items-center justify-center min-h-[80vh] text-center">
+      <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 text-blue-600 text-sm font-medium mb-8 border border-blue-100">
+        <span className="relative flex h-2 w-2">
+          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+          <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+        </span>
+        AI-Powered Diagnosis Engine
+      </div>
+      
+      <h1 className="text-5xl md:text-7xl font-extrabold text-slate-900 tracking-tight mb-6 max-w-4xl leading-tight">
+        Early Detection of <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-500">Respiratory Infections</span>
+      </h1>
+      
+      <p className="text-lg md:text-xl text-slate-600 mb-10 max-w-2xl leading-relaxed">
+        Our expert system analyzes your symptoms using forward chaining and certainty factors to provide an accurate early diagnosis of Acute Respiratory Infections (ISPA).
+      </p>
+      
+      <div className="flex gap-4">
+        <Link href="/register" className="bg-blue-600 text-white px-8 py-4 rounded-full font-semibold text-lg hover:bg-blue-700 transition-all shadow-lg shadow-blue-200 hover:-translate-y-1 flex items-center gap-2">
+          Start Consultation <ArrowRight className="w-5 h-5" />
+        </Link>
+        <Link href="/login" className="bg-white text-slate-700 px-8 py-4 rounded-full font-semibold text-lg hover:bg-slate-50 transition-all border border-slate-200 hover:-translate-y-1">
+          Login to Account
+        </Link>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-24">
+        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 text-left hover:shadow-md transition">
+          <div className="w-12 h-12 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center mb-4">
+            <ShieldCheck className="w-6 h-6" />
+          </div>
+          <h3 className="text-xl font-bold text-slate-800 mb-2">High Accuracy</h3>
+          <p className="text-slate-600">Built upon knowledge from multiple respiratory experts using certainty factors.</p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 text-left hover:shadow-md transition">
+          <div className="w-12 h-12 bg-cyan-100 text-cyan-600 rounded-xl flex items-center justify-center mb-4">
+            <Zap className="w-6 h-6" />
+          </div>
+          <h3 className="text-xl font-bold text-slate-800 mb-2">Instant Results</h3>
+          <p className="text-slate-600">Get immediate diagnostic feedback and recommended actions.</p>
         </div>
-      </main>
+        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 text-left hover:shadow-md transition">
+          <div className="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-xl flex items-center justify-center mb-4">
+            <Activity className="w-6 h-6" />
+          </div>
+          <h3 className="text-xl font-bold text-slate-800 mb-2">Track History</h3>
+          <p className="text-slate-600">Keep a record of your past consultations and symptom history.</p>
+        </div>
+      </div>
     </div>
   );
 }
