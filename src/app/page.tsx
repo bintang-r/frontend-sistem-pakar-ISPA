@@ -1,7 +1,8 @@
 'use client';
 import Link from 'next/link';
-import { ArrowRight, ShieldCheck, Zap, Activity, BarChart3, Database, FileSearch, Stethoscope } from 'lucide-react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from 'recharts';
+import { ArrowRight, Search, Zap, Activity, BarChart3, ShieldCheck, Database, FileText, ChevronRight, Stethoscope, Phone, Video } from 'lucide-react';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, AreaChart, Area } from 'recharts';
+import { useState } from 'react';
 
 const dummyAgeData = [
   { name: 'Balita (0-5)', cases: 420 },
@@ -21,96 +22,229 @@ const accuracyData = [
 ];
 
 export default function Home() {
+  const [activeTab, setActiveTab] = useState('Gejala Umum');
+
+  const tabsData: Record<string, any> = {
+    'Gejala Umum': {
+      title: 'Gejala Umum ISPA',
+      desc: 'ISPA (Infeksi Saluran Pernapasan Akut) biasanya ditandai dengan batuk kering atau berdahak, pilek, hidung tersumbat, sakit tenggorokan, dan demam. Pada kasus yang parah, bisa terjadi sesak napas. Pengenalan gejala sejak dini sangat penting.',
+      img: 'https://images.unsplash.com/photo-1584036561566-baf8f5f1b144?auto=format&fit=crop&w=600&q=80'
+    },
+    'Pencegahan': {
+      title: 'Langkah Pencegahan',
+      desc: 'Pencegahan terbaik adalah menjaga kebersihan diri. Rutin mencuci tangan dengan sabun, menggunakan masker di tempat umum, menghindari kontak dekat dengan penderita, serta menjaga imunitas dengan makanan bergizi dan istirahat yang cukup.',
+      img: 'https://images.unsplash.com/photo-1584483766114-2cea6facdf57?auto=format&fit=crop&w=600&q=80'
+    },
+    'Pengobatan': {
+      title: 'Penanganan Pertama',
+      desc: 'Sebagian besar kasus ISPA ringan yang disebabkan oleh virus dapat sembuh sendiri dengan istirahat yang cukup, banyak minum air putih, dan obat pereda demam/batuk yang dijual bebas. Konsultasikan ke dokter jika gejala memberat atau disertai sesak napas.',
+      img: 'https://images.unsplash.com/photo-1631549916768-4119b2e5f926?auto=format&fit=crop&w=600&q=80'
+    },
+    'Komplikasi': {
+      title: 'Waspada Komplikasi',
+      desc: 'Jika dibiarkan, ISPA dapat memicu komplikasi serius seperti pneumonia (paru-paru basah), bronkitis akut, hingga kegagalan pernapasan. Deteksi dini melalui sistem pakar ini membantu Anda mengambil langkah medis dengan tepat waktu.',
+      img: 'https://images.unsplash.com/photo-1516574187841-cb9cc2ca948b?auto=format&fit=crop&w=600&q=80'
+    },
+  };
+
   return (
-    <div className="w-full flex flex-col pt-16 -mx-4 md:-mx-8"> {/* Negative margins to break out of layout max-w */}
+    <div className="w-full flex flex-col pt-16 -mx-4 md:-mx-8 font-sans">
       
-      {/* 1. HERO SECTION */}
-      <section id="home" className="min-h-[90vh] flex flex-col items-center justify-center text-center px-4 relative overflow-hidden">
-        {/* Background blobs */}
-        <div className="absolute top-20 left-10 w-72 h-72 bg-emerald-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
-        <div className="absolute top-20 right-10 w-72 h-72 bg-teal-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
-        <div className="absolute -bottom-8 left-1/2 w-72 h-72 bg-green-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000"></div>
-
-        <div className="relative z-10 max-w-5xl mx-auto px-4 mt-20 md:mt-0">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-50 text-emerald-700 text-sm font-semibold mb-8 border border-emerald-200 shadow-sm mx-auto">
-            <span className="relative flex h-2.5 w-2.5">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
-            </span>
-            Sistem Pakar ISPA AI Terpercaya
-          </div>
-          
-          <h1 className="text-5xl md:text-7xl font-extrabold text-slate-900 tracking-tight mb-8 leading-tight">
-            Deteksi Dini & Cepat <br className="hidden md:block"/>
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-teal-500">Infeksi Saluran Pernapasan</span>
-          </h1>
-          
-          <p className="text-lg md:text-2xl text-slate-600 mb-12 max-w-3xl mx-auto leading-relaxed">
-            Analisis gejala Anda menggunakan sistem cerdas berbasis <span className="font-semibold text-slate-800">Forward Chaining</span> dan <span className="font-semibold text-slate-800">Certainty Factor</span> untuk mendapatkan hasil diagnosis dalam hitungan detik.
-          </p>
-          
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Link href="/register" className="bg-emerald-600 text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-emerald-700 transition-all shadow-xl shadow-emerald-200/50 hover:-translate-y-1 flex items-center gap-2 w-full sm:w-auto justify-center">
-              Mulai Konsultasi <ArrowRight className="w-5 h-5" />
-            </Link>
-            <Link href="/login" className="bg-white text-slate-700 px-8 py-4 rounded-full font-bold text-lg hover:bg-slate-50 transition-all border border-slate-200 hover:-translate-y-1 w-full sm:w-auto justify-center shadow-sm">
-              Masuk ke Akun
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* 2. FEATURES SECTION */}
-      <section id="features" className="py-24 bg-slate-50 border-y border-slate-200 px-4">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-sm font-bold text-emerald-600 uppercase tracking-wider mb-2">Keunggulan Sistem</h2>
-            <h3 className="text-3xl md:text-4xl font-bold text-slate-900">Mengapa Memilih ISPADiag?</h3>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 text-left hover:shadow-lg transition duration-300">
-              <div className="w-14 h-14 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center mb-6">
-                <ShieldCheck className="w-7 h-7" />
-              </div>
-              <h4 className="text-2xl font-bold text-slate-800 mb-3">Akurasi Tinggi</h4>
-              <p className="text-slate-600 leading-relaxed">Sistem ini dibangun berdasarkan basis pengetahuan medis dari para pakar menggunakan perhitungan Certainty Factor yang akurat.</p>
+      {/* 1. HERO SECTION (Split Layout) */}
+      <section id="home" className="relative bg-gradient-to-br from-emerald-50 via-white to-teal-50 pt-20 pb-32 px-4 md:px-8 overflow-hidden">
+        <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-12">
+          {/* Left Text */}
+          <div className="lg:w-1/2 z-10 text-center lg:text-left mt-8 lg:mt-0">
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold text-slate-900 leading-[1.15] mb-6">
+              Deteksi Dini ISPA,<br/>
+              <span className="text-teal-500">Cepat & Akurat</span>
+            </h1>
+            <p className="text-lg md:text-xl text-slate-600 mb-8 max-w-lg mx-auto lg:mx-0 leading-relaxed">
+              Analisis gejala Anda menggunakan sistem pakar cerdas berbasis *Forward Chaining* dan *Certainty Factor* untuk hasil yang dipercaya ahli medis.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 mb-10 justify-center lg:justify-start">
+              <Link href="/register" className="bg-teal-500 text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-teal-600 transition shadow-lg shadow-teal-200/50 hover:-translate-y-1">
+                Mulai Konsultasi
+              </Link>
+              <Link href="/login" className="bg-white text-slate-700 px-8 py-4 rounded-full font-bold text-lg border border-slate-200 hover:bg-slate-50 transition shadow-sm flex items-center justify-center gap-2 hover:-translate-y-1">
+                <Search className="w-5 h-5"/> Masuk Akun
+              </Link>
             </div>
-            
-            <div className="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 text-left hover:shadow-lg transition duration-300">
-              <div className="w-14 h-14 bg-teal-100 text-teal-600 rounded-2xl flex items-center justify-center mb-6">
-                <Zap className="w-7 h-7" />
+            <div className="flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start bg-white/50 backdrop-blur-sm w-fit p-3 pr-6 rounded-full border border-teal-100 mx-auto lg:mx-0">
+              <div className="flex -space-x-3">
+                {[1,2,3,4].map(i => <div key={i} className="w-10 h-10 rounded-full border-2 border-white bg-slate-200 shadow-sm" style={{backgroundImage: `url(https://i.pravatar.cc/100?img=${i+10})`, backgroundSize: 'cover'}}></div>)}
+                <div className="w-10 h-10 rounded-full border-2 border-white bg-teal-100 text-teal-600 flex items-center justify-center font-bold text-xs shadow-sm">+</div>
               </div>
-              <h4 className="text-2xl font-bold text-slate-800 mb-3">Hasil Instan</h4>
-              <p className="text-slate-600 leading-relaxed">Tidak perlu menunggu lama. Dapatkan hasil diagnosis, persentase keyakinan, dan rekomendasi pengobatan secara langsung.</p>
+              <p className="text-sm font-semibold text-slate-700">95K+ Pasien<br/><span className="text-slate-500 font-normal">Telah terbantu</span></p>
             </div>
+          </div>
+
+          {/* Right Image */}
+          <div className="lg:w-1/2 relative mt-16 lg:mt-0">
+            {/* Decorative background shape */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[350px] md:w-[450px] h-[450px] md:h-[550px] bg-teal-400 rounded-t-full mix-blend-multiply filter blur-[80px] opacity-20"></div>
             
-            <div className="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 text-left hover:shadow-lg transition duration-300">
-              <div className="w-14 h-14 bg-lime-100 text-lime-600 rounded-2xl flex items-center justify-center mb-6">
-                <Database className="w-7 h-7" />
-              </div>
-              <h4 className="text-2xl font-bold text-slate-800 mb-3">Rekam Jejak</h4>
-              <p className="text-slate-600 leading-relaxed">Semua riwayat konsultasi pasien disimpan dengan aman untuk memantau perkembangan dan perbandingan di masa mendatang.</p>
+            <div className="relative z-10 w-full max-w-sm md:max-w-md mx-auto">
+                {/* Doctor Image */}
+                <div className="rounded-b-full rounded-t-full overflow-hidden shadow-2xl border-8 border-white bg-teal-100 aspect-[3/4] relative">
+                    <img src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=crop&w=800&q=80" alt="Doctor" className="w-full h-full object-cover object-top" />
+                </div>
+                
+                {/* Floating Card 1 - Left */}
+                <div className="absolute top-16 -left-6 md:-left-16 bg-white p-4 rounded-2xl shadow-xl border border-slate-100 z-20 flex items-center gap-4 animate-bounce" style={{animationDuration: '3s'}}>
+                    <div className="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center">
+                        <Activity className="w-6 h-6" />
+                    </div>
+                    <div>
+                        <p className="text-xs text-slate-500 font-bold uppercase tracking-wider">Akurasi Sistem</p>
+                        <p className="text-lg font-extrabold text-slate-900">95%+</p>
+                    </div>
+                </div>
+
+                {/* Floating Card 2 - Right */}
+                <div className="absolute bottom-24 -right-4 md:-right-12 bg-white p-4 rounded-2xl shadow-xl border border-slate-100 z-20 flex flex-col items-center animate-bounce" style={{animationDuration: '4s', animationDelay: '1s'}}>
+                    <div className="w-12 h-12 bg-teal-100 text-teal-600 rounded-2xl flex items-center justify-center mb-2">
+                        <Video className="w-6 h-6" />
+                    </div>
+                    <p className="text-sm font-bold text-slate-800">Konsultasi AI</p>
+                    <p className="text-xs text-slate-500">24/7 Tersedia</p>
+                </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* 3. STATISTICS SECTION */}
-      <section id="statistics" className="py-24 bg-white px-4">
+      {/* 2. FEATURES SECTION (Solid Teal Background matching mockup) */}
+      <section id="features" className="bg-teal-500 pt-24 pb-32 px-4 relative overflow-hidden">
+        <div className="max-w-7xl mx-auto relative z-10">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">Kemudahan Cek Gejala</h2>
+            <p className="text-teal-100 text-lg max-w-2xl mx-auto">Dirancang untuk memberikan diagnosis awal dengan pendekatan certainty factor berbasis keahlian dokter.</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {/* Highlighted Card (White) */}
+            <div className="bg-white p-8 rounded-[2rem] shadow-2xl flex flex-col items-center text-center transform hover:-translate-y-2 transition duration-300">
+              <div className="w-16 h-16 bg-teal-100 text-teal-600 rounded-full flex items-center justify-center mb-6">
+                <ShieldCheck className="w-8 h-8" />
+              </div>
+              <h3 className="text-xl font-bold text-slate-800 mb-3">Akurasi Tinggi</h3>
+              <p className="text-slate-600 text-sm leading-relaxed">Sistem pakar menggunakan pengetahuan yang diekstrak langsung dari para dokter spesialis.</p>
+            </div>
+            
+            {/* Standard Transparent Cards */}
+            <div className="bg-teal-600/30 p-8 rounded-[2rem] border border-teal-400/30 flex flex-col items-center text-center hover:bg-teal-600/50 transition duration-300">
+              <div className="w-16 h-16 bg-white text-teal-600 rounded-full flex items-center justify-center mb-6 shadow-md">
+                <Zap className="w-8 h-8" />
+              </div>
+              <h3 className="text-xl font-bold text-white mb-3">Hasil Instan</h3>
+              <p className="text-teal-100 text-sm leading-relaxed">Diagnosis realtime dalam hitungan detik setelah Anda melengkapi form gejala konsultasi.</p>
+            </div>
+            
+            <div className="bg-teal-600/30 p-8 rounded-[2rem] border border-teal-400/30 flex flex-col items-center text-center hover:bg-teal-600/50 transition duration-300">
+              <div className="w-16 h-16 bg-white text-teal-600 rounded-full flex items-center justify-center mb-6 shadow-md">
+                <Database className="w-8 h-8" />
+              </div>
+              <h3 className="text-xl font-bold text-white mb-3">Rekam Jejak</h3>
+              <p className="text-teal-100 text-sm leading-relaxed">Simpan semua riwayat konsultasi Anda dengan aman sebagai referensi di kemudian hari.</p>
+            </div>
+
+            <div className="bg-teal-600/30 p-8 rounded-[2rem] border border-teal-400/30 flex flex-col items-center text-center hover:bg-teal-600/50 transition duration-300">
+              <div className="w-16 h-16 bg-white text-teal-600 rounded-full flex items-center justify-center mb-6 shadow-md">
+                <Stethoscope className="w-8 h-8" />
+              </div>
+              <h3 className="text-xl font-bold text-white mb-3">Spesialis Medis</h3>
+              <p className="text-teal-100 text-sm leading-relaxed">Formula perhitungan sistem divalidasi langsung oleh ahli saluran pernapasan profesional.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 3. TABBED INFO SECTION (Replacing "Facilities and Services") */}
+      <section id="informasi" className="py-24 bg-white px-4">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-sm font-bold text-emerald-600 uppercase tracking-wider mb-2">Statistik ISPA</h2>
-            <h3 className="text-3xl md:text-4xl font-bold text-slate-900">Data dan Akurasi Sistem</h3>
-            <p className="text-slate-500 mt-4 max-w-2xl mx-auto">Melihat gambaran distribusi kerentanan ISPA berdasarkan kelompok usia dan pemantauan peningkatan akurasi dari sistem kami secara berkala.</p>
+            <h3 className="text-3xl md:text-4xl font-extrabold text-teal-600 mb-2">Informasi <span className="text-slate-800">dan Pengetahuan</span></h3>
+            <p className="text-slate-500">Pahami lebih jauh tentang Infeksi Saluran Pernapasan Akut</p>
+          </div>
+
+          <div className="flex flex-col lg:flex-row gap-12 items-start">
+            {/* Tabs List */}
+            <div className="lg:w-1/3 w-full flex flex-col gap-2 relative">
+              <div className="absolute left-0 top-0 bottom-0 w-1 bg-teal-100 rounded-full"></div>
+              {Object.keys(tabsData).map((key) => (
+                <button
+                  key={key}
+                  onClick={() => setActiveTab(key)}
+                  className={`text-left px-8 py-5 font-bold text-lg transition-all relative ${
+                    activeTab === key 
+                      ? 'bg-gradient-to-r from-teal-500 to-teal-400 text-white rounded-r-2xl shadow-lg shadow-teal-200' 
+                      : 'bg-white text-slate-600 hover:bg-slate-50'
+                  }`}
+                >
+                  {activeTab === key && <div className="absolute left-0 top-0 bottom-0 w-1 bg-teal-600 rounded-full"></div>}
+                  {key}
+                </button>
+              ))}
+            </div>
+
+            {/* Tab Content */}
+            <div className="lg:w-2/3 w-full">
+              <div className="bg-white rounded-[2rem] p-8 md:p-10 shadow-xl shadow-slate-200/50 border border-slate-100 flex flex-col md:flex-row gap-8 items-center min-h-[350px]">
+                <div className="w-full md:w-1/2 aspect-square md:aspect-auto h-full min-h-[250px] rounded-3xl overflow-hidden relative shadow-md border-4 border-slate-50">
+                  <img src={tabsData[activeTab].img} alt={activeTab} className="w-full h-full object-cover absolute inset-0" />
+                </div>
+                <div className="w-full md:w-1/2">
+                  <h4 className="text-2xl font-extrabold text-slate-900 mb-4">{tabsData[activeTab].title}</h4>
+                  <p className="text-slate-600 leading-relaxed mb-8">{tabsData[activeTab].desc}</p>
+                  <Link href="/consultation" className="inline-flex items-center gap-2 bg-teal-500 text-white px-6 py-3 rounded-full font-bold hover:bg-teal-600 transition shadow-lg shadow-teal-200">
+                    Pelajari Lebih Lanjut
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 5. CALL TO ACTION BANNER (Wide teal banner matching mockup) */}
+      <section className="py-12 bg-white px-4 md:px-8 mb-20 mt-10">
+        <div className="max-w-7xl mx-auto bg-teal-500 rounded-[2.5rem] p-8 md:p-16 flex flex-col md:flex-row items-center justify-between gap-10 shadow-2xl shadow-teal-200 relative overflow-hidden">
+            <div className="md:w-1/2 relative z-10 text-center md:text-left">
+                <h2 className="text-3xl md:text-5xl font-extrabold text-white mb-6 leading-tight">
+                    24/7 Konsultasi ISPA Secara Online
+                </h2>
+                <p className="text-teal-100 text-lg mb-8 max-w-lg">
+                    Sistem pakar cerdas kami siap membantu Anda melakukan pemeriksaan mandiri kapan saja.
+                </p>
+                <Link href="/register" className="inline-block bg-white text-teal-600 px-8 py-4 rounded-xl font-bold text-lg hover:bg-slate-50 transition shadow-lg hover:-translate-y-1">
+                    Konsultasi Sekarang
+                </Link>
+            </div>
+            
+            <div className="md:w-1/2 relative z-10 flex justify-center md:justify-end">
+                <div className="relative w-full max-w-sm">
+                    <img src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=800&q=80" alt="Medical Team" className="w-full rounded-[2rem] shadow-xl border-4 border-teal-400" />
+                    <div className="absolute -top-6 -left-6 text-white opacity-50 font-bold text-5xl animate-pulse">+</div>
+                    <div className="absolute -bottom-4 right-10 text-teal-200 opacity-60 font-bold text-4xl animate-bounce">+</div>
+                </div>
+            </div>
+        </div>
+      </section>
+
+      {/* 4. STATISTICS SECTION (Moved to bottom above footer) */}
+      <section id="statistics" className="py-24 bg-slate-50 px-4 border-t border-slate-100">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <h3 className="text-3xl md:text-4xl font-extrabold text-slate-900 mb-2">Statistik <span className="text-teal-600">Sistem</span></h3>
+            <p className="text-slate-500">Distribusi kerentanan dan akurasi diagnosis kami</p>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-            {/* Chart 1: Bar Chart */}
-            <div className="bg-slate-50 p-8 rounded-3xl border border-slate-100">
+            <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm hover:shadow-lg transition duration-300">
               <div className="flex items-center gap-3 mb-6">
-                <BarChart3 className="text-emerald-600 w-6 h-6" />
-                <h4 className="text-xl font-bold text-slate-800">Kerentanan Kasus per Usia</h4>
+                <BarChart3 className="text-teal-600 w-6 h-6" />
+                <h4 className="text-xl font-bold text-slate-800">Kasus ISPA per Kelompok Usia</h4>
               </div>
               <div className="h-72 w-full">
                 <ResponsiveContainer width="100%" height="100%">
@@ -118,18 +252,17 @@ export default function Home() {
                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
                     <XAxis dataKey="name" tick={{fontSize: 12, fill: '#64748b'}} axisLine={false} tickLine={false} />
                     <YAxis tick={{fontSize: 12, fill: '#64748b'}} axisLine={false} tickLine={false} />
-                    <Tooltip cursor={{fill: '#f1f5f9'}} contentStyle={{borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'}} />
-                    <Bar dataKey="cases" fill="#10b981" radius={[6, 6, 0, 0]} />
+                    <RechartsTooltip cursor={{fill: '#f1f5f9'}} contentStyle={{borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'}} />
+                    <Bar dataKey="cases" fill="#14b8a6" radius={[6, 6, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               </div>
             </div>
 
-            {/* Chart 2: Area Chart */}
-            <div className="bg-slate-50 p-8 rounded-3xl border border-slate-100">
+            <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm hover:shadow-lg transition duration-300">
               <div className="flex items-center gap-3 mb-6">
-                <Activity className="text-teal-600 w-6 h-6" />
-                <h4 className="text-xl font-bold text-slate-800">Peningkatan Akurasi Diagnosis (%)</h4>
+                <Activity className="text-emerald-600 w-6 h-6" />
+                <h4 className="text-xl font-bold text-slate-800">Evaluasi Akurasi Diagnosis (%)</h4>
               </div>
               <div className="h-72 w-full">
                 <ResponsiveContainer width="100%" height="100%">
@@ -143,7 +276,7 @@ export default function Home() {
                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
                     <XAxis dataKey="month" tick={{fontSize: 12, fill: '#64748b'}} axisLine={false} tickLine={false} />
                     <YAxis domain={[80, 100]} tick={{fontSize: 12, fill: '#64748b'}} axisLine={false} tickLine={false} />
-                    <Tooltip contentStyle={{borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'}} />
+                    <RechartsTooltip contentStyle={{borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'}} />
                     <Area type="monotone" dataKey="accuracy" stroke="#14b8a6" strokeWidth={3} fillOpacity={1} fill="url(#colorAcc)" />
                   </AreaChart>
                 </ResponsiveContainer>
@@ -153,53 +286,18 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 4. HOW IT WORKS */}
-      <section id="how-it-works" className="py-24 bg-emerald-900 text-white px-4">
-        <div className="max-w-5xl mx-auto text-center">
-          <h2 className="text-sm font-bold text-emerald-400 uppercase tracking-wider mb-2">Panduan Pengguna</h2>
-          <h3 className="text-3xl md:text-4xl font-bold mb-16">Cara Kerja ISPADiag</h3>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 relative">
-            {/* Connecting line for desktop */}
-            <div className="hidden md:block absolute top-12 left-[15%] right-[15%] h-1 bg-emerald-700/50 -z-0"></div>
-
-            <div className="relative z-10 flex flex-col items-center">
-              <div className="w-24 h-24 rounded-full bg-emerald-800 border-4 border-emerald-600 flex items-center justify-center text-3xl font-bold mb-6 shadow-lg">1</div>
-              <h4 className="text-xl font-bold mb-3">Buat Akun</h4>
-              <p className="text-emerald-100/80">Registrasi akun secara gratis untuk dapat mengakses fitur konsultasi medis penuh.</p>
-            </div>
-
-            <div className="relative z-10 flex flex-col items-center">
-              <div className="w-24 h-24 rounded-full bg-emerald-800 border-4 border-emerald-600 flex items-center justify-center text-3xl font-bold mb-6 shadow-lg">
-                <FileSearch className="w-10 h-10" />
-              </div>
-              <h4 className="text-xl font-bold mb-3">Pilih Gejala</h4>
-              <p className="text-emerald-100/80">Pilih gejala yang Anda alami beserta tingkat keparahannya pada form konsultasi.</p>
-            </div>
-
-            <div className="relative z-10 flex flex-col items-center">
-              <div className="w-24 h-24 rounded-full bg-emerald-800 border-4 border-emerald-600 flex items-center justify-center text-3xl font-bold mb-6 shadow-lg">
-                <Stethoscope className="w-10 h-10" />
-              </div>
-              <h4 className="text-xl font-bold mb-3">Dapatkan Diagnosis</h4>
-              <p className="text-emerald-100/80">Sistem akan segera memberikan hasil diagnosis penyakit ISPA beserta saran penanganannya.</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 5. FOOTER */}
-      <footer className="bg-slate-900 text-slate-400 py-12 px-4 border-t border-slate-800">
+      {/* 6. FOOTER */}
+      <footer className="bg-slate-900 text-slate-400 py-12 px-4">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="flex items-center gap-2 text-white font-bold text-2xl">
-              <Stethoscope className="w-8 h-8 text-emerald-500" />
+              <Stethoscope className="w-8 h-8 text-teal-500" />
               <span>ISPA<span className="text-slate-500">Diag</span></span>
           </div>
           <div className="flex gap-6 text-sm font-medium">
             <a href="#home" className="hover:text-white transition">Home</a>
             <a href="#features" className="hover:text-white transition">Features</a>
-            <a href="#statistics" className="hover:text-white transition">Statistics</a>
-            <a href="#how-it-works" className="hover:text-white transition">Guide</a>
+            <a href="#informasi" className="hover:text-white transition">Informasi</a>
+            <a href="#statistics" className="hover:text-white transition">Statistik</a>
           </div>
           <div className="text-sm">
             &copy; {new Date().getFullYear()} ISPADiag Expert System. All rights reserved.
