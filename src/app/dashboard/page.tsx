@@ -3,12 +3,15 @@ import { useEffect, useState, useRef } from 'react';
 import api from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Activity, Clock, FileText, PlusCircle, User as UserIcon, MessageSquare, CheckCircle, Camera, Upload } from 'lucide-react';
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000';
 
 export default function Dashboard() {
-    const { user, login } = useAuthStore();
+    const { user, login, isAuthenticated } = useAuthStore();
+    const router = useRouter();
+    const [mounted, setMounted] = useState(false);
     const [history, setHistory] = useState<any[]>([]);
     const [activeTab, setActiveTab] = useState<'history' | 'profile' | 'testimonial'>('history');
 
@@ -33,13 +36,21 @@ export default function Dashboard() {
     const [hasSubmittedTesti, setHasSubmittedTesti] = useState(false);
 
     useEffect(() => {
-        api.get('consultations/').then(res => setHistory(res.data)).catch(console.error);
-        api.get('testimonials/').then(res => {
-            if (res.data.some((t: any) => t.user_name === user?.full_name)) {
-                setHasSubmittedTesti(true);
-            }
-        }).catch(console.error);
-    }, [user]);
+        setMounted(true);
+        if (!isAuthenticated && !localStorage.getItem('access_token')) {
+            router.push('/login');
+            return;
+        }
+
+        if (isAuthenticated) {
+            api.get('consultations/').then(res => setHistory(res.data)).catch(console.error);
+            api.get('testimonials/').then(res => {
+                if (res.data.some((t: any) => t.user_name === user?.full_name)) {
+                    setHasSubmittedTesti(true);
+                }
+            }).catch(console.error);
+        }
+    }, [user, isAuthenticated]);
 
     const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -99,31 +110,39 @@ export default function Dashboard() {
         ? `${BACKEND_URL}${(user as any).profile_picture}`
         : null;
 
+    if (!mounted || !isAuthenticated) {
+        return (
+            <div className="flex justify-center items-center min-h-[60vh]">
+                <div className="animate-spin w-12 h-12 border-4 border-teal-600 border-t-transparent rounded-full"></div>
+            </div>
+        );
+    }
+
     return (
         <div className="max-w-6xl mx-auto space-y-8 px-4 md:px-8 py-8">
             <header className="flex flex-col md:flex-row md:justify-between md:items-end gap-4 pb-6 border-b border-slate-200">
                 <div className="flex items-center gap-4">
                     {/* Avatar in header */}
-                    <div className="w-14 h-14 rounded-full overflow-hidden bg-emerald-100 border-2 border-emerald-200 flex items-center justify-center shrink-0">
+                    <div className="w-14 h-14 rounded-full overflow-hidden bg-teal-100 border-2 border-teal-200 flex items-center justify-center shrink-0">
                         {currentAvatar ? (
                             <img src={currentAvatar} alt="avatar" className="w-full h-full object-cover" />
                         ) : (
-                            <UserIcon className="w-7 h-7 text-emerald-500" />
+                            <UserIcon className="w-7 h-7 text-teal-500" />
                         )}
                     </div>
                     <div>
                         <h1 className="text-3xl font-bold text-slate-900">Dashboard</h1>
-                        <p className="text-slate-500 mt-0.5">Welcome back, <span className="text-emerald-600 font-semibold">{user?.full_name}</span></p>
+                        <p className="text-slate-500 mt-0.5">Welcome back, <span className="text-teal-600 font-semibold">{user?.full_name}</span></p>
                     </div>
                 </div>
-                <Link href="/consultation" className="bg-emerald-600 text-white px-6 py-3 rounded-full font-semibold hover:bg-emerald-700 transition flex items-center justify-center gap-2 shadow-lg shadow-emerald-200">
+                <Link href="/consultation" className="bg-teal-500 text-white px-6 py-3 rounded-full font-semibold hover:bg-teal-600 transition flex items-center justify-center gap-2 shadow-lg shadow-teal-200">
                     <PlusCircle className="w-5 h-5" /> New Consultation
                 </Link>
             </header>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-4">
-                    <div className="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-xl flex items-center justify-center"><Activity /></div>
+                    <div className="w-12 h-12 bg-teal-100 text-teal-600 rounded-xl flex items-center justify-center"><Activity /></div>
                     <div>
                         <p className="text-sm font-medium text-slate-500">Total Consultations</p>
                         <h2 className="text-2xl font-bold text-slate-900">{history.length}</h2>
@@ -133,13 +152,13 @@ export default function Dashboard() {
 
             {/* Tabs */}
             <div className="flex gap-4 border-b border-slate-200">
-                <button onClick={() => setActiveTab('history')} className={`pb-3 font-semibold transition-colors ${activeTab === 'history' ? 'border-b-2 border-emerald-600 text-emerald-600' : 'text-slate-500 hover:text-slate-800'}`}>
+                <button onClick={() => setActiveTab('history')} className={`pb-3 font-semibold transition-colors ${activeTab === 'history' ? 'border-b-2 border-teal-600 text-teal-600' : 'text-slate-500 hover:text-slate-800'}`}>
                     History
                 </button>
-                <button onClick={() => setActiveTab('profile')} className={`pb-3 font-semibold transition-colors ${activeTab === 'profile' ? 'border-b-2 border-emerald-600 text-emerald-600' : 'text-slate-500 hover:text-slate-800'}`}>
+                <button onClick={() => setActiveTab('profile')} className={`pb-3 font-semibold transition-colors ${activeTab === 'profile' ? 'border-b-2 border-teal-600 text-teal-600' : 'text-slate-500 hover:text-slate-800'}`}>
                     Profile
                 </button>
-                <button onClick={() => setActiveTab('testimonial')} className={`pb-3 font-semibold transition-colors ${activeTab === 'testimonial' ? 'border-b-2 border-emerald-600 text-emerald-600' : 'text-slate-500 hover:text-slate-800'}`}>
+                <button onClick={() => setActiveTab('testimonial')} className={`pb-3 font-semibold transition-colors ${activeTab === 'testimonial' ? 'border-b-2 border-teal-600 text-teal-600' : 'text-slate-500 hover:text-slate-800'}`}>
                     Testimonial
                 </button>
             </div>
@@ -167,7 +186,7 @@ export default function Dashboard() {
                                                 <p className="text-sm text-slate-500">{new Date(item.consultation_date).toLocaleString()}</p>
                                             </div>
                                         </div>
-                                        <span className="font-bold text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full text-sm">
+                                        <span className="font-bold text-teal-600 bg-teal-50 px-3 py-1 rounded-full text-sm">
                                             {item.confidence_result}%
                                         </span>
                                     </div>
@@ -182,7 +201,7 @@ export default function Dashboard() {
             {activeTab === 'profile' && (
                 <div className="max-w-2xl space-y-6">
                     {profileMsg && (
-                        <div className={`p-3 rounded-lg text-sm font-medium border ${profileMsgType === 'success' ? 'bg-emerald-50 text-emerald-700 border-emerald-100' : 'bg-red-50 text-red-700 border-red-100'}`}>
+                        <div className={`p-3 rounded-lg text-sm font-medium border ${profileMsgType === 'success' ? 'bg-teal-50 text-teal-700 border-teal-100' : 'bg-red-50 text-red-700 border-red-100'}`}>
                             {profileMsg}
                         </div>
                     )}
@@ -196,7 +215,7 @@ export default function Dashboard() {
                         <div className="flex flex-col sm:flex-row items-center gap-6">
                             {/* Avatar Preview */}
                             <div className="relative group shrink-0">
-                                <div className="w-28 h-28 rounded-full overflow-hidden bg-emerald-50 border-4 border-emerald-100 flex items-center justify-center shadow-md">
+                                <div className="w-28 h-28 rounded-full overflow-hidden bg-teal-50 border-4 border-teal-100 flex items-center justify-center shadow-md">
                                     {avatarPreview || currentAvatar ? (
                                         <img
                                             src={avatarPreview || currentAvatar || ''}
@@ -204,7 +223,7 @@ export default function Dashboard() {
                                             className="w-full h-full object-cover"
                                         />
                                     ) : (
-                                        <UserIcon className="w-12 h-12 text-emerald-300" />
+                                        <UserIcon className="w-12 h-12 text-teal-300" />
                                     )}
                                 </div>
                                 {/* Overlay on hover */}
@@ -242,7 +261,7 @@ export default function Dashboard() {
                                             type="button"
                                             onClick={handleUploadAvatar}
                                             disabled={isUploadingAvatar}
-                                            className="flex items-center gap-2 bg-emerald-600 text-white px-4 py-2 rounded-xl text-sm font-semibold hover:bg-emerald-700 transition disabled:opacity-60"
+                                            className="flex items-center gap-2 bg-teal-500 text-white px-4 py-2 rounded-xl text-sm font-semibold hover:bg-teal-600 transition disabled:opacity-60"
                                         >
                                             <Upload className="w-4 h-4" />
                                             {isUploadingAvatar ? 'Mengupload...' : 'Upload Foto'}
@@ -271,7 +290,7 @@ export default function Dashboard() {
                                     value={fullName}
                                     onChange={e => setFullName(e.target.value)}
                                     required
-                                    className="w-full border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-slate-800"
+                                    className="w-full border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-teal-500 text-slate-800"
                                 />
                             </div>
                             <div>
@@ -281,7 +300,7 @@ export default function Dashboard() {
                                     value={email}
                                     onChange={e => setEmail(e.target.value)}
                                     required
-                                    className="w-full border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-slate-800"
+                                    className="w-full border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-teal-500 text-slate-800"
                                 />
                             </div>
                             <button type="submit" className="bg-slate-900 text-white px-6 py-3 rounded-xl font-bold hover:bg-slate-800 transition">
@@ -300,10 +319,10 @@ export default function Dashboard() {
                         <h3 className="font-bold text-lg text-slate-800">Your Testimonial</h3>
                     </div>
                     {hasSubmittedTesti ? (
-                        <div className="p-8 text-center bg-emerald-50 border border-emerald-100 rounded-xl">
-                            <CheckCircle className="w-12 h-12 text-emerald-500 mx-auto mb-3" />
-                            <h4 className="font-bold text-emerald-800">Thank you!</h4>
-                            <p className="text-emerald-600 text-sm mt-1">You have already submitted a testimonial.</p>
+                        <div className="p-8 text-center bg-teal-50 border border-teal-100 rounded-xl">
+                            <CheckCircle className="w-12 h-12 text-teal-500 mx-auto mb-3" />
+                            <h4 className="font-bold text-teal-800">Thank you!</h4>
+                            <p className="text-teal-600 text-sm mt-1">You have already submitted a testimonial.</p>
                         </div>
                     ) : history.length === 0 ? (
                         <div className="p-8 text-center bg-slate-50 border border-slate-100 rounded-xl">
@@ -322,9 +341,9 @@ export default function Dashboard() {
                             </div>
                             <div>
                                 <label className="block text-sm font-medium text-slate-700 mb-1">Feedback</label>
-                                <textarea value={content} onChange={e => setContent(e.target.value)} required rows={4} className="w-full border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-emerald-500" placeholder="How did the system help you?"></textarea>
+                                <textarea value={content} onChange={e => setContent(e.target.value)} required rows={4} className="w-full border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-teal-500" placeholder="How did the system help you?"></textarea>
                             </div>
-                            <button type="submit" className="bg-emerald-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-emerald-700 transition">Submit Testimonial</button>
+                            <button type="submit" className="bg-teal-500 text-white px-6 py-3 rounded-xl font-bold hover:bg-teal-600 transition">Submit Testimonial</button>
                         </form>
                     )}
                 </div>

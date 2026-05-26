@@ -36,11 +36,20 @@ export default function Navbar() {
                         
                         {isAuthenticated ? (
                             <>
-                                {user?.role === 'admin' && (
-                                    <Link href="/admin" className="text-teal-700 hover:text-teal-500 font-bold flex items-center gap-1"><ShieldAlert className="w-4 h-4"/> Admin</Link>
+                                {user?.role === 'admin' ? (
+                                    <Link href="/admin" className="text-teal-700 hover:text-teal-500 font-bold flex items-center gap-1">
+                                        <ShieldAlert className="w-4 h-4"/> Admin
+                                    </Link>
+                                ) : (
+                                    <>
+                                        <Link href="/dashboard" className="text-slate-600 hover:text-teal-600 font-bold flex items-center gap-1">
+                                            <Activity className="w-4 h-4"/> Dashboard
+                                        </Link>
+                                        <Link href="/consultation" className="text-slate-600 hover:text-teal-600 font-bold">
+                                            Konsultasi
+                                        </Link>
+                                    </>
                                 )}
-                                <Link href="/dashboard" className="text-slate-600 hover:text-teal-600 font-bold flex items-center gap-1"><Activity className="w-4 h-4"/> Dashboard</Link>
-                                <Link href="/consultation" className="text-slate-600 hover:text-teal-600 font-bold">Konsultasi</Link>
                                 <div className="flex items-center gap-4 ml-4 pl-4 border-l border-slate-200">
                                     <span className="text-sm font-bold text-slate-500 flex items-center gap-2">
                                         <div className="w-8 h-8 rounded-full bg-teal-100 flex items-center justify-center text-teal-600">
@@ -48,7 +57,13 @@ export default function Navbar() {
                                         </div>
                                         {user?.full_name}
                                     </span>
-                                    <button onClick={logout} className="text-rose-500 hover:text-rose-700 transition">
+                                    <button 
+                                        onClick={() => {
+                                            logout();
+                                            window.location.href = '/';
+                                        }} 
+                                        className="text-rose-500 hover:text-rose-700 transition"
+                                    >
                                         <LogOut className="w-5 h-5" />
                                     </button>
                                 </div>

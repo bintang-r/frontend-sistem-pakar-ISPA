@@ -1,151 +1,142 @@
 'use client';
 import { useEffect, useState } from 'react';
 import api from '@/lib/api';
-import { useAuthStore } from '@/store/authStore';
-import { ShieldAlert, Users, Stethoscope, Activity, FileText } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { Activity, Stethoscope, FileText, Users, Calendar, Award } from 'lucide-react';
+import {
+  ResponsiveContainer,
+  XAxis, YAxis,
+  PieChart, Pie, Cell, LineChart, Line,
+  BarChart, Bar, CartesianGrid, Tooltip, Legend
+} from 'recharts';
 
-export default function AdminDashboard() {
-    const { user, isAuthenticated } = useAuthStore();
-    const router = useRouter();
-    const [activeTab, setActiveTab] = useState('symptoms');
-    
-    const [symptoms, setSymptoms] = useState<any[]>([]);
-    const [diseases, setDiseases] = useState<any[]>([]);
-    const [consultations, setConsultations] = useState<any[]>([]);
+const CHART_COLORS = ['#0D9488', '#06B6D4', '#3B82F6', '#8B5CF6', '#EC4899', '#F59E0B', '#EF4444'];
+
+export default function AdminDashboardPage() {
+    const [stats, setStats] = useState<any>(null);
 
     useEffect(() => {
-        if (isAuthenticated && user?.role !== 'admin') {
-            router.push('/dashboard');
-        } else if (isAuthenticated) {
-            fetchData();
-        }
-    }, [isAuthenticated, user]);
-
-    const fetchData = async () => {
-        api.get('symptoms/').then(res => setSymptoms(res.data));
-        api.get('diseases/').then(res => setDiseases(res.data));
-        api.get('consultations/').then(res => setConsultations(res.data));
-    };
-
-    if (user?.role !== 'admin') return <div className="p-20 text-center">Loading...</div>;
-
-    const deleteSymptom = async (id: number) => {
-        if (!confirm('Are you sure?')) return;
-        await api.delete(`symptoms/${id}/`);
-        fetchData();
-    };
+        api.get('statistics/').then(res => setStats(res.data)).catch(console.error);
+    }, []);
 
     return (
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row gap-8 px-4 md:px-8 py-8">
-            {/* Sidebar */}
-            <div className="w-full md:w-64 shrink-0 space-y-2">
-                <div className="mb-6 p-4 bg-emerald-50 rounded-xl border border-emerald-100 flex items-center gap-3 text-emerald-800 font-bold">
-                    <ShieldAlert className="w-6 h-6" /> Admin Portal
+        <div className="bg-white rounded-[2rem] shadow-sm border border-slate-100 p-6 md:p-8 min-h-[600px]">
+            <div className="space-y-8">
+                <div>
+                    <h2 className="text-2xl font-black text-slate-800 tracking-tight">Dashboard Overview</h2>
+                    <p className="text-slate-500 text-sm mt-0.5">Statistik dan analisis data sistem pakar ISPA</p>
                 </div>
-                {[
-                    { id: 'symptoms', label: 'Symptoms', icon: Activity },
-                    { id: 'diseases', label: 'Diseases', icon: Stethoscope },
-                    { id: 'consultations', label: 'Consultations', icon: FileText },
-                ].map(tab => (
-                    <button
-                        key={tab.id}
-                        onClick={() => setActiveTab(tab.id)}
-                        className={`w-full text-left px-4 py-3 rounded-xl font-medium flex items-center gap-3 transition-colors ${activeTab === tab.id ? 'bg-emerald-600 text-white shadow-md' : 'text-slate-600 hover:bg-slate-100'}`}
-                    >
-                        <tab.icon className="w-5 h-5" /> {tab.label}
-                    </button>
-                ))}
-            </div>
 
-            {/* Content */}
-            <div className="flex-1 bg-white rounded-3xl shadow-sm border border-slate-100 p-8">
-                {activeTab === 'symptoms' && (
-                    <div>
-                        <div className="flex justify-between items-center mb-6">
-                            <h2 className="text-2xl font-bold text-slate-800">Manage Symptoms</h2>
-                            <button className="bg-emerald-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-emerald-700 transition">Add Symptom</button>
+                {/* Stats Cards */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                    <div className="bg-gradient-to-br from-teal-50 to-teal-100/50 p-6 rounded-3xl border border-teal-100/80 shadow-sm flex items-center gap-4">
+                        <div className="p-3 bg-teal-500 rounded-2xl text-white">
+                            <Users className="w-6 h-6" />
                         </div>
-                        <div className="overflow-x-auto">
-                            <table className="w-full text-left border-collapse">
-                                <thead>
-                                    <tr className="border-b-2 border-slate-100 text-slate-500">
-                                        <th className="p-3">Code</th>
-                                        <th className="p-3">Name</th>
-                                        <th className="p-3">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {symptoms.map(s => (
-                                        <tr key={s.id} className="border-b border-slate-50 hover:bg-slate-50">
-                                            <td className="p-3 font-mono text-sm text-slate-500">{s.code}</td>
-                                            <td className="p-3 font-medium text-slate-800">{s.name}</td>
-                                            <td className="p-3">
-                                                <button className="text-blue-600 hover:underline mr-3">Edit</button>
-                                                <button onClick={() => deleteSymptom(s.id)} className="text-rose-600 hover:underline">Delete</button>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
+                        <div>
+                            <p className="text-[10px] text-teal-700 font-bold uppercase tracking-wider">Total Pasien</p>
+                            <h3 className="text-2xl font-black text-slate-800">{stats?.total_patients || 0}</h3>
                         </div>
                     </div>
-                )}
-                
-                {activeTab === 'diseases' && (
-                    <div>
-                        <div className="flex justify-between items-center mb-6">
-                            <h2 className="text-2xl font-bold text-slate-800">Manage Diseases</h2>
-                            <button className="bg-emerald-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-emerald-700 transition">Add Disease</button>
+                    <div className="bg-gradient-to-br from-sky-50 to-sky-100/50 p-6 rounded-3xl border border-sky-100/80 shadow-sm flex items-center gap-4">
+                        <div className="p-3 bg-sky-500 rounded-2xl text-white">
+                            <FileText className="w-6 h-6" />
                         </div>
-                        <div className="overflow-x-auto">
-                            <table className="w-full text-left border-collapse">
-                                <thead>
-                                    <tr className="border-b-2 border-slate-100 text-slate-500">
-                                        <th className="p-3">Code</th>
-                                        <th className="p-3">Name</th>
-                                        <th className="p-3">Recommendation</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {diseases.map(d => (
-                                        <tr key={d.id} className="border-b border-slate-50 hover:bg-slate-50">
-                                            <td className="p-3 font-mono text-sm text-slate-500">{d.code}</td>
-                                            <td className="p-3 font-medium text-slate-800">{d.name}</td>
-                                            <td className="p-3 text-slate-600 truncate max-w-xs">{d.recommendation}</td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
+                        <div>
+                            <p className="text-[10px] text-sky-700 font-bold uppercase tracking-wider">Total Konsultasi</p>
+                            <h3 className="text-2xl font-black text-slate-800">{stats?.total_consultations || 0}</h3>
                         </div>
                     </div>
-                )}
-                
-                {activeTab === 'consultations' && (
-                    <div>
-                        <h2 className="text-2xl font-bold text-slate-800 mb-6">All Consultations</h2>
-                        <div className="overflow-x-auto">
-                            <table className="w-full text-left border-collapse">
-                                <thead>
-                                    <tr className="border-b-2 border-slate-100 text-slate-500">
-                                        <th className="p-3">Date</th>
-                                        <th className="p-3">Final Diagnosis</th>
-                                        <th className="p-3">Confidence</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {consultations.map(c => (
-                                        <tr key={c.id} className="border-b border-slate-50 hover:bg-slate-50">
-                                            <td className="p-3 text-slate-600">{new Date(c.consultation_date).toLocaleDateString()}</td>
-                                            <td className="p-3 font-medium text-slate-800">{c.final_diagnosis}</td>
-                                            <td className="p-3"><span className="bg-emerald-100 text-emerald-800 px-2 py-1 rounded-md text-xs font-bold">{c.confidence_result}%</span></td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
+                    <div className="bg-gradient-to-br from-purple-50 to-purple-100/50 p-6 rounded-3xl border border-purple-100/80 shadow-sm flex items-center gap-4">
+                        <div className="p-3 bg-purple-500 rounded-2xl text-white">
+                            <Award className="w-6 h-6" />
+                        </div>
+                        <div>
+                            <p className="text-[10px] text-purple-700 font-bold uppercase tracking-wider">Rata-rata CF</p>
+                            <h3 className="text-2xl font-black text-slate-800">{stats?.avg_confidence || 0}%</h3>
                         </div>
                     </div>
-                )}
+                </div>
+
+                {/* Charts Section */}
+                <div className="space-y-8">
+                    {/* Bar & Pie Grid */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="bg-slate-50/50 p-6 rounded-3xl border border-slate-100">
+                            <h3 className="text-sm font-black text-slate-800 mb-4 flex items-center gap-2">
+                                <Activity className="w-4 h-4 text-teal-500" /> Kasus per Jenis Penyakit (Bar Chart)
+                            </h3>
+                            {stats?.disease_distribution && stats.disease_distribution.length > 0 ? (
+                                <ResponsiveContainer width="100%" height={260}>
+                                    <BarChart data={stats.disease_distribution}>
+                                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E2E8F0" />
+                                        <XAxis dataKey="name" stroke="#64748B" fontSize={10} tickLine={false} />
+                                        <YAxis stroke="#64748B" fontSize={11} tickLine={false} />
+                                        <Tooltip cursor={{ fill: 'rgba(13, 148, 136, 0.05)' }} />
+                                        <Bar dataKey="cases" fill="#0D9488" radius={[6, 6, 0, 0]} />
+                                    </BarChart>
+                                </ResponsiveContainer>
+                            ) : (
+                                <div className="h-[260px] flex items-center justify-center text-xs text-slate-400 font-bold italic">Belum ada data distribusi penyakit.</div>
+                            )}
+                        </div>
+
+                        <div className="bg-slate-50/50 p-6 rounded-3xl border border-slate-100">
+                            <h3 className="text-sm font-black text-slate-800 mb-4 flex items-center gap-2">
+                                <Stethoscope className="w-4 h-4 text-teal-500" /> Proporsi Diagnosis (Pie Chart)
+                            </h3>
+                            {stats?.disease_distribution && stats.disease_distribution.length > 0 ? (
+                                <ResponsiveContainer width="100%" height={260}>
+                                    <PieChart>
+                                        <Pie
+                                            data={stats.disease_distribution}
+                                            dataKey="cases"
+                                            nameKey="name"
+                                            cx="50%"
+                                            cy="50%"
+                                            outerRadius={80}
+                                            label={({ percent }: { percent?: number }) => `${(percent || 0 * 100).toFixed(0)}%`}
+                                        >
+                                            {stats.disease_distribution.map((entry: any, index: number) => (
+                                                <Cell key={`cell-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} />
+                                            ))}
+                                        </Pie>
+                                        <Tooltip />
+                                        <Legend formatter={(value) => <span className="text-slate-600 text-[10px] font-bold">{value}</span>} iconSize={8} />
+                                    </PieChart>
+                                </ResponsiveContainer>
+                            ) : (
+                                <div className="h-[260px] flex items-center justify-center text-xs text-slate-400 font-bold italic">Belum ada data proporsi diagnosis.</div>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* Line Chart / Dot Chart */}
+                    <div className="bg-slate-50/50 p-6 rounded-3xl border border-slate-100">
+                        <h3 className="text-sm font-black text-slate-800 mb-4 flex items-center gap-2">
+                            <Calendar className="w-4 h-4 text-teal-500" /> Tren Aktivitas Konsultasi Pasien (Line/Dot Chart)
+                        </h3>
+                        {stats?.consultation_trend && stats.consultation_trend.length > 0 ? (
+                            <ResponsiveContainer width="100%" height={250}>
+                                <LineChart data={stats.consultation_trend}>
+                                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E2E8F0" />
+                                    <XAxis dataKey="month" stroke="#64748B" fontSize={10} tickLine={false} />
+                                    <YAxis stroke="#64748B" fontSize={11} tickLine={false} />
+                                    <Tooltip />
+                                    <Line 
+                                        type="monotone" 
+                                        dataKey="total" 
+                                        stroke="#0D9488" 
+                                        strokeWidth={3} 
+                                        activeDot={{ r: 8 }} 
+                                        dot={{ stroke: '#0D9488', strokeWidth: 3, r: 4, fill: '#FFFFFF' }} 
+                                    />
+                                </LineChart>
+                            </ResponsiveContainer>
+                        ) : (
+                            <div className="h-[250px] flex items-center justify-center text-xs text-slate-400 font-bold italic">Belum ada data tren konsultasi.</div>
+                        )}
+                    </div>
+                </div>
             </div>
         </div>
     );

@@ -1,24 +1,52 @@
 'use client';
 import Link from 'next/link';
 import { ArrowRight, Search, Zap, Activity, BarChart3, ShieldCheck, Database, FileText, ChevronRight, Stethoscope, Phone, Video } from 'lucide-react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, AreaChart, Area } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, AreaChart, Area, PieChart, Pie, Cell, LineChart, Line } from 'recharts';
 import { useState, useEffect } from 'react';
 import api from '@/lib/api';
+import { useRouter } from 'next/navigation';
+import { useAuthStore } from '@/store/authStore';
 
-const accuracyData = [
-  { month: 'Jan', accuracy: 85 },
-  { month: 'Feb', accuracy: 87 },
-  { month: 'Mar', accuracy: 89 },
-  { month: 'Apr', accuracy: 92 },
-  { month: 'May', accuracy: 95 },
-  { month: 'Jun', accuracy: 96 },
-];
+const getInitials = (name: string) => {
+  if (!name) return '?';
+  const parts = name.trim().split(/\s+/);
+  if (parts.length === 1) return parts[0].substring(0, 2).toUpperCase();
+  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+};
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState('Gejala Umum');
+  const { isAuthenticated } = useAuthStore();
+  const router = useRouter();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+    if (isAuthenticated) {
+      router.push('/dashboard');
+    }
+  }, [isAuthenticated]);
   
   // Dynamic states
-  const [stats, setStats] = useState<{ total_patients: number | null, total_consultations: number, disease_distribution: any[], avg_confidence: number, recent_avatars: {name: string, avatar: string}[] }>({ total_patients: null, total_consultations: 0, disease_distribution: [], avg_confidence: 90, recent_avatars: [] });
+  const [stats, setStats] = useState<{ 
+    total_patients: number | null, 
+    total_consultations: number, 
+    disease_distribution: any[], 
+    avg_confidence: number, 
+    recent_avatars: {name: string, avatar: string}[],
+    top_symptoms: any[],
+    accuracy_trend: any[],
+    consultation_trend: any[]
+  }>({ 
+    total_patients: null, 
+    total_consultations: 0, 
+    disease_distribution: [], 
+    avg_confidence: 90, 
+    recent_avatars: [],
+    top_symptoms: [],
+    accuracy_trend: [],
+    consultation_trend: []
+  });
   const [testimonials, setTestimonials] = useState<any[]>([]);
 
   useEffect(() => {
@@ -48,6 +76,14 @@ export default function Home() {
       img: 'https://images.unsplash.com/photo-1516574187841-cb9cc2ca948b?auto=format&fit=crop&w=600&q=80'
     },
   };
+
+  if (!mounted || isAuthenticated) {
+    return (
+      <div className="flex justify-center items-center min-h-[60vh]">
+        <div className="animate-spin w-12 h-12 border-4 border-teal-600 border-t-transparent rounded-full"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full flex flex-col font-sans">
@@ -118,7 +154,7 @@ export default function Home() {
                 
                 {/* Floating Card 1 - Left */}
                 <div className="absolute top-16 -left-6 md:-left-16 bg-white p-4 rounded-2xl shadow-xl border border-slate-100 z-20 flex items-center gap-4 animate-bounce" style={{animationDuration: '3s'}}>
-                    <div className="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center">
+                    <div className="w-12 h-12 bg-teal-100 text-teal-600 rounded-full flex items-center justify-center">
                         <Activity className="w-6 h-6" />
                     </div>
                     <div>
@@ -238,6 +274,7 @@ export default function Home() {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+            {/* Chart 1: Distribusi Penyakit */}
             <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm hover:shadow-lg transition duration-300">
               <div className="flex items-center gap-3 mb-6">
                 <BarChart3 className="text-teal-600 w-6 h-6" />
@@ -260,27 +297,88 @@ export default function Home() {
               </div>
             </div>
 
+            {/* Chart 2: Akurasi Diagnosis */}
             <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm hover:shadow-lg transition duration-300">
               <div className="flex items-center gap-3 mb-6">
-                <Activity className="text-emerald-600 w-6 h-6" />
+                <Activity className="text-teal-600 w-6 h-6" />
                 <h4 className="text-xl font-bold text-slate-800">Evaluasi Akurasi Diagnosis (%)</h4>
               </div>
               <div className="h-72 w-full">
-                <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={accuracyData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                    <defs>
-                      <linearGradient id="colorAcc" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#14b8a6" stopOpacity={0.3}/>
-                        <stop offset="95%" stopColor="#14b8a6" stopOpacity={0}/>
-                      </linearGradient>
-                    </defs>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
-                    <XAxis dataKey="month" tick={{fontSize: 12, fill: '#64748b'}} axisLine={false} tickLine={false} />
-                    <YAxis domain={[80, 100]} tick={{fontSize: 12, fill: '#64748b'}} axisLine={false} tickLine={false} />
-                    <RechartsTooltip contentStyle={{borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'}} />
-                    <Area type="monotone" dataKey="accuracy" stroke="#14b8a6" strokeWidth={3} fillOpacity={1} fill="url(#colorAcc)" />
-                  </AreaChart>
-                </ResponsiveContainer>
+                {stats.accuracy_trend.length > 0 ? (
+                  <ResponsiveContainer width="100%" height="100%">
+                    <AreaChart data={stats.accuracy_trend} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                      <defs>
+                        <linearGradient id="colorAcc" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="#14b8a6" stopOpacity={0.3}/>
+                          <stop offset="95%" stopColor="#14b8a6" stopOpacity={0}/>
+                        </linearGradient>
+                      </defs>
+                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
+                      <XAxis dataKey="month" tick={{fontSize: 12, fill: '#64748b'}} axisLine={false} tickLine={false} />
+                      <YAxis domain={[0, 100]} tick={{fontSize: 12, fill: '#64748b'}} axisLine={false} tickLine={false} />
+                      <RechartsTooltip contentStyle={{borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'}} />
+                      <Area type="monotone" dataKey="accuracy" stroke="#14b8a6" strokeWidth={3} fillOpacity={1} fill="url(#colorAcc)" />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-slate-400">Belum ada data akurasi</div>
+                )}
+              </div>
+            </div>
+
+            {/* Chart 3: Top Symptoms */}
+            <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm hover:shadow-lg transition duration-300">
+              <div className="flex items-center gap-3 mb-6">
+                <ShieldCheck className="text-rose-500 w-6 h-6" />
+                <h4 className="text-xl font-bold text-slate-800">Gejala Paling Sering Muncul</h4>
+              </div>
+              <div className="h-72 w-full">
+                {stats.top_symptoms.length > 0 ? (
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart margin={{ top: 0, right: 0, left: 0, bottom: 0 }}>
+                      <Pie
+                        data={stats.top_symptoms}
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={60}
+                        outerRadius={90}
+                        paddingAngle={5}
+                        dataKey="count"
+                        nameKey="name"
+                      >
+                        {stats.top_symptoms.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={['#14b8a6', '#0ea5e9', '#f59e0b', '#ec4899', '#8b5cf6'][index % 5]} />
+                        ))}
+                      </Pie>
+                      <RechartsTooltip contentStyle={{borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'}} />
+                    </PieChart>
+                  </ResponsiveContainer>
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-slate-400">Belum ada data gejala</div>
+                )}
+              </div>
+            </div>
+
+            {/* Chart 4: Consultation Trend */}
+            <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm hover:shadow-lg transition duration-300">
+              <div className="flex items-center gap-3 mb-6">
+                <Database className="text-blue-500 w-6 h-6" />
+                <h4 className="text-xl font-bold text-slate-800">Tren Penggunaan Sistem</h4>
+              </div>
+              <div className="h-72 w-full">
+                {stats.consultation_trend.length > 0 ? (
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={stats.consultation_trend} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
+                      <XAxis dataKey="month" tick={{fontSize: 12, fill: '#64748b'}} axisLine={false} tickLine={false} />
+                      <YAxis tick={{fontSize: 12, fill: '#64748b'}} axisLine={false} tickLine={false} allowDecimals={false} />
+                      <RechartsTooltip contentStyle={{borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'}} />
+                      <Line type="monotone" dataKey="total" stroke="#0ea5e9" strokeWidth={3} dot={{r: 4, strokeWidth: 2}} activeDot={{r: 6}} />
+                    </LineChart>
+                  </ResponsiveContainer>
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-slate-400">Belum ada data tren</div>
+                )}
               </div>
             </div>
           </div>
@@ -325,7 +423,15 @@ export default function Home() {
                   </div>
                   <p className="text-slate-600 italic mb-6 flex-1">"{testi.content}"</p>
                   <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-full bg-teal-100" style={{backgroundImage: `url(https://i.pravatar.cc/100?img=${i+25})`, backgroundSize: 'cover'}}></div>
+                    {testi.profile_picture ? (
+                      <div className="w-12 h-12 rounded-full border border-slate-100 overflow-hidden shrink-0">
+                        <img src={testi.profile_picture} alt={testi.user_name} className="w-full h-full object-cover" />
+                      </div>
+                    ) : (
+                      <div className="w-12 h-12 rounded-full bg-teal-50 text-teal-600 border border-teal-100/50 flex items-center justify-center font-extrabold text-sm shrink-0">
+                        {getInitials(testi.user_name)}
+                      </div>
+                    )}
                     <div>
                       <h5 className="font-bold text-slate-900 text-sm">{testi.user_name}</h5>
                       <p className="text-xs text-slate-500">{new Date(testi.created_at).toLocaleDateString()}</p>
