@@ -2,6 +2,9 @@
 import { useEffect, useState } from 'react';
 import api from '@/lib/api';
 import { Plus, Trash2, X } from 'lucide-react';
+import { useClientTable } from '@/hooks/useClientTable';
+import { SortableHeader } from '@/components/SortableHeader';
+import { PaginationControls } from '@/components/PaginationControls';
 
 export default function AdminDiseasesPage() {
     const [diseases, setDiseases] = useState<any[]>([]);
@@ -10,6 +13,12 @@ export default function AdminDiseasesPage() {
         name: '', code: '', category: 'Ringan', description: '',
         recommendation: '', treatment_solutions: '', recovery_steps: ''
     });
+
+    const {
+        searchTerm, setSearchTerm, sortConfig, requestSort,
+        currentPage, setCurrentPage, pageSize, setPageSize,
+        totalPages, paginatedData, totalItems
+    } = useClientTable(diseases, ['code', 'name', 'category', 'recommendation'], 10);
 
     const fetchDiseases = async () => {
         api.get('diseases/').then(res => setDiseases(res.data)).catch(console.error);
@@ -57,20 +66,31 @@ export default function AdminDiseasesPage() {
                         <Plus className="w-4 h-4" /> Tambah Penyakit
                     </button>
                 </div>
+                <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
+                    <div className="relative w-full sm:w-72">
+                        <input 
+                            type="text"
+                            placeholder="Cari penyakit..."
+                            value={searchTerm}
+                            onChange={e => setSearchTerm(e.target.value)}
+                            className="w-full px-4 py-2 text-xs border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 bg-slate-50/50 font-semibold"
+                        />
+                    </div>
+                </div>
                 
                 <div className="overflow-x-auto rounded-2xl border border-slate-100">
                     <table className="w-full text-left border-collapse text-sm">
                         <thead>
                             <tr className="border-b border-slate-100 bg-slate-50/50 text-slate-500 font-bold">
-                                <th className="p-4">Kode</th>
-                                <th className="p-4">Nama Penyakit</th>
-                                <th className="p-4">Kategori</th>
-                                <th className="p-4">Rekomendasi</th>
+                                <SortableHeader label="Kode" sortKey="code" currentSort={sortConfig} onSort={requestSort} />
+                                <SortableHeader label="Nama Penyakit" sortKey="name" currentSort={sortConfig} onSort={requestSort} />
+                                <SortableHeader label="Kategori" sortKey="category" currentSort={sortConfig} onSort={requestSort} />
+                                <SortableHeader label="Rekomendasi" sortKey="recommendation" currentSort={sortConfig} onSort={requestSort} />
                                 <th className="p-4 text-right">Aksi</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-50">
-                            {diseases.map(d => (
+                            {paginatedData.map(d => (
                                 <tr key={d.id} className="hover:bg-slate-50/50 transition">
                                     <td className="p-4 font-mono font-bold text-teal-600">{d.code}</td>
                                     <td className="p-4 font-bold text-slate-800">{d.name}</td>
@@ -83,9 +103,23 @@ export default function AdminDiseasesPage() {
                                     </td>
                                 </tr>
                             ))}
+                            {paginatedData.length === 0 && (
+                                <tr>
+                                    <td colSpan={5} className="p-8 text-center text-slate-400 font-semibold italic">Tidak ada penyakit ditemukan.</td>
+                                </tr>
+                            )}
                         </tbody>
                     </table>
                 </div>
+
+                <PaginationControls 
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={setCurrentPage}
+                    pageSize={pageSize}
+                    onPageSizeChange={setPageSize}
+                    totalItems={totalItems}
+                />
             </div>
 
             {/* ADD DISEASE MODAL */}

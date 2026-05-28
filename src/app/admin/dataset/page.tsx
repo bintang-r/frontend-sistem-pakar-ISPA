@@ -2,6 +2,10 @@
 import { useEffect, useState } from 'react';
 import api from '@/lib/api';
 import { Plus, Trash2, X, Play, CheckCircle, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useClientTable } from '@/hooks/useClientTable';
+import { SortableHeader } from '@/components/SortableHeader';
+import { PaginationControls } from '@/components/PaginationControls';
+import { Search } from 'lucide-react';
 
 export default function AdminDatasetPage() {
     const [dataset, setDataset] = useState<any[]>([]);
@@ -13,6 +17,8 @@ export default function AdminDatasetPage() {
     const [symptoms, setSymptoms] = useState<any[]>([]);
     const [diseases, setDiseases] = useState<any[]>([]);
     const [newRow, setNewRow] = useState<any>({ age: 0, diagnosis: '' });
+
+    const datasetTable = useClientTable(dataset, ['id', 'age', 'diagnosis'], 10);
 
     const fetchInitialData = async () => {
         api.get('symptoms/').then(res => setSymptoms(res.data)).catch(console.error);
@@ -109,24 +115,38 @@ export default function AdminDatasetPage() {
                     </div>
                 )}
 
+                <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-2">
+                    <h4 className="text-sm font-bold text-slate-800">Daftar Data Latih</h4>
+                    <div className="relative w-full sm:w-72">
+                        <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+                        <input 
+                            type="text"
+                            placeholder="Cari diagnosis atau umur..."
+                            value={datasetTable.searchTerm}
+                            onChange={e => datasetTable.setSearchTerm(e.target.value)}
+                            className="w-full pl-9 pr-4 py-2 text-xs border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 bg-slate-50/50 font-semibold"
+                        />
+                    </div>
+                </div>
+
                 <div className="overflow-x-auto rounded-2xl border border-slate-100">
                     <table className="w-full text-left border-collapse text-xs">
                         <thead>
                             <tr className="border-b border-slate-100 bg-slate-50/50 text-slate-500 font-bold">
-                                <th className="p-3">ID</th>
-                                <th className="p-3">Umur</th>
+                                <SortableHeader label="ID" sortKey="id" currentSort={datasetTable.sortConfig} onSort={datasetTable.requestSort} className="p-3" />
+                                <SortableHeader label="Umur" sortKey="age" currentSort={datasetTable.sortConfig} onSort={datasetTable.requestSort} className="p-3" />
                                 <th className="p-3">B.Kering</th>
                                 <th className="p-3">B.Dahak</th>
                                 <th className="p-3">Demam</th>
                                 <th className="p-3">Pilek</th>
                                 <th className="p-3">Sesak</th>
                                 <th className="p-3">Nyeri Tenggorok</th>
-                                <th className="p-3">Diagnosis</th>
+                                <SortableHeader label="Diagnosis" sortKey="diagnosis" currentSort={datasetTable.sortConfig} onSort={datasetTable.requestSort} className="p-3" />
                                 <th className="p-3 text-right">Aksi</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-50 font-medium">
-                            {dataset.map(row => (
+                            {datasetTable.paginatedData.map(row => (
                                 <tr key={row.id} className="hover:bg-slate-50/50 transition">
                                     <td className="p-3 font-mono font-bold text-slate-400">Row #{row.id}</td>
                                     <td className="p-3 text-slate-700">{row.age} Thn</td>
@@ -144,12 +164,27 @@ export default function AdminDatasetPage() {
                                     </td>
                                 </tr>
                             ))}
+                            {datasetTable.paginatedData.length === 0 && (
+                                <tr>
+                                    <td colSpan={10} className="p-8 text-center text-slate-400 font-semibold italic">Tidak ada data latih ditemukan.</td>
+                                </tr>
+                            )}
                         </tbody>
                     </table>
                 </div>
 
-                <div className="flex justify-between items-center pt-2">
-                    <span className="text-xs text-slate-400 font-semibold">Halaman {datasetPage} dari {Math.ceil(datasetTotal / 100) || 1}</span>
+                <PaginationControls 
+                    currentPage={datasetTable.currentPage}
+                    totalPages={datasetTable.totalPages}
+                    onPageChange={datasetTable.setCurrentPage}
+                    pageSize={datasetTable.pageSize}
+                    onPageSizeChange={datasetTable.setPageSize}
+                    totalItems={datasetTable.totalItems}
+                    pageSizeOptions={[10, 20, 50]}
+                />
+
+                <div className="flex justify-between items-center pt-6 border-t border-slate-100 mt-6">
+                    <span className="text-xs text-slate-400 font-semibold">Total Server Dataset: <span className="font-bold text-slate-700">{datasetTotal} baris</span> (Page {datasetPage})</span>
                     <div className="flex gap-2">
                         <button 
                             disabled={datasetPage <= 1}

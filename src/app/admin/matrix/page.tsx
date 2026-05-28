@@ -1,10 +1,19 @@
 'use client';
 import { useEffect, useState } from 'react';
 import api from '@/lib/api';
+import { useClientTable } from '@/hooks/useClientTable';
+import { SortableHeader } from '@/components/SortableHeader';
+import { PaginationControls } from '@/components/PaginationControls';
 
 export default function AdminMatrixPage() {
     const [matrix, setMatrix] = useState<any[]>([]);
     const [rules, setRules] = useState<any[]>([]);
+
+    const {
+        searchTerm, setSearchTerm, sortConfig, requestSort,
+        currentPage, setCurrentPage, pageSize, setPageSize,
+        totalPages, paginatedData, totalItems
+    } = useClientTable(matrix, ['disease_code', 'disease_name', 'symptom_code', 'symptom_name', 'expert_cf'], 10);
 
     useEffect(() => {
         api.get('rules/matrix/').then(res => {
@@ -42,19 +51,30 @@ export default function AdminMatrixPage() {
                 {/* Certainty Factors Matrix */}
                 <div className="space-y-4">
                     <h3 className="text-base font-bold text-slate-800">2. Bobot Probabilitas Certainty Factor (expert_cf)</h3>
+                    <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-4">
+                        <div className="relative w-full sm:w-72">
+                            <input 
+                                type="text"
+                                placeholder="Cari penyakit / gejala..."
+                                value={searchTerm}
+                                onChange={e => setSearchTerm(e.target.value)}
+                                className="w-full px-4 py-2 text-xs border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 bg-slate-50/50 font-semibold"
+                            />
+                        </div>
+                    </div>
                     <div className="overflow-x-auto rounded-2xl border border-slate-100">
                         <table className="w-full text-left border-collapse text-xs">
                             <thead>
                                 <tr className="border-b border-slate-100 bg-slate-50/50 text-slate-500 font-bold">
-                                    <th className="p-3">Kode Penyakit</th>
-                                    <th className="p-3">Nama Penyakit</th>
-                                    <th className="p-3">Kode Gejala</th>
-                                    <th className="p-3">Nama Gejala</th>
-                                    <th className="p-3 text-right">Nilai CF</th>
+                                    <SortableHeader label="Kode Penyakit" sortKey="disease_code" currentSort={sortConfig} onSort={requestSort} className="p-3" />
+                                    <SortableHeader label="Nama Penyakit" sortKey="disease_name" currentSort={sortConfig} onSort={requestSort} className="p-3" />
+                                    <SortableHeader label="Kode Gejala" sortKey="symptom_code" currentSort={sortConfig} onSort={requestSort} className="p-3" />
+                                    <SortableHeader label="Nama Gejala" sortKey="symptom_name" currentSort={sortConfig} onSort={requestSort} className="p-3" />
+                                    <SortableHeader label="Nilai CF" sortKey="expert_cf" currentSort={sortConfig} onSort={requestSort} className="p-3 text-right" />
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-50 font-medium">
-                                {matrix.map((cf, index) => (
+                                {paginatedData.map((cf, index) => (
                                     <tr key={index} className="hover:bg-slate-50/50 transition">
                                         <td className="p-3 font-mono font-bold text-slate-400">{cf.disease_code}</td>
                                         <td className="p-3 text-slate-700 font-bold">{cf.disease_name}</td>
@@ -67,9 +87,23 @@ export default function AdminMatrixPage() {
                                         </td>
                                     </tr>
                                 ))}
+                                {paginatedData.length === 0 && (
+                                    <tr>
+                                        <td colSpan={5} className="p-8 text-center text-slate-400 font-semibold italic">Tidak ada matrix ditemukan.</td>
+                                    </tr>
+                                )}
                             </tbody>
                         </table>
                     </div>
+
+                    <PaginationControls 
+                        currentPage={currentPage}
+                        totalPages={totalPages}
+                        onPageChange={setCurrentPage}
+                        pageSize={pageSize}
+                        onPageSizeChange={setPageSize}
+                        totalItems={totalItems}
+                    />
                 </div>
             </div>
         </div>

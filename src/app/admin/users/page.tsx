@@ -9,11 +9,13 @@ import {
 } from 'recharts';
 
 const CHART_COLORS = ['#0D9488', '#06B6D4', '#3B82F6', '#8B5CF6', '#EC4899', '#F59E0B', '#EF4444'];
+import { useClientTable } from '@/hooks/useClientTable';
+import { SortableHeader } from '@/components/SortableHeader';
+import { PaginationControls } from '@/components/PaginationControls';
 
 export default function AdminUsersPage() {
     const [usersList, setUsersList] = useState<any[]>([]);
     const [symptoms, setSymptoms] = useState<any[]>([]);
-    const [userSearch, setUserSearch] = useState('');
     const [selectedUser, setSelectedUser] = useState<any | null>(null);
     const [selectedConsultation, setSelectedConsultation] = useState<any | null>(null);
     
@@ -25,6 +27,10 @@ export default function AdminUsersPage() {
     const [matcherTotal, setMatcherTotal] = useState(0);
     const [scatterViewMode, setScatterViewMode] = useState<'all' | 'paginated'>('all');
     const [showCalcModal, setShowCalcModal] = useState(false);
+
+    const usersTable = useClientTable(usersList, ['full_name', 'email'], 10);
+    const consultationsTable = useClientTable(selectedUser?.consultations || [], ['final_diagnosis', 'consultation_date'], 5);
+    const matcherTable = useClientTable(matcherDataset, ['diagnosis', 'id'], 10);
 
     useEffect(() => {
         api.get('admin/users/').then(res => setUsersList(res.data)).catch(console.error);
@@ -65,10 +71,24 @@ export default function AdminUsersPage() {
         }).catch(console.error);
     };
 
-    const symptomCodeToKey: Record<string, string> = {};
-    symptoms.forEach((s: any, idx: number) => {
-        symptomCodeToKey[s.code] = `symptom_${idx + 1}`;
-    });
+    const symptomCodeToKey: Record<string, string> = {
+        'S01': 'batuk_kering',
+        'S02': 'batuk_berdahak',
+        'S03': 'demam',
+        'S04': 'pilek',
+        'S05': 'hidung_tersumbat',
+        'S06': 'sesak_napas',
+        'S07': 'nyeri_tenggorokan',
+        'S08': 'sakit_kepala',
+        'S09': 'mual_muntah',
+        'S10': 'nyeri_dada',
+        'S11': 'suara_serak',
+        'S12': 'kelelahan',
+        'S13': 'berkeringat_malam',
+        'S14': 'nafsu_makan_turun',
+        'S15': 'hilang_penciuman',
+        'S16': 'nyeri_saat_menelan',
+    };
 
     const getRowHighlightColor = (row: any, activeSymptoms: string[], finalDiagnosis: string) => {
         if (!activeSymptoms || activeSymptoms.length === 0) return '';
@@ -85,12 +105,6 @@ export default function AdminUsersPage() {
         return '';
     };
 
-    const filteredUsers = usersList.filter(u => 
-        u.full_name.toLowerCase().includes(userSearch.toLowerCase()) ||
-        u.username.toLowerCase().includes(userSearch.toLowerCase()) ||
-        u.email?.toLowerCase().includes(userSearch.toLowerCase())
-    );
-
     return (
         <div className="bg-white rounded-[2rem] shadow-sm border border-slate-100 p-6 md:p-8 min-h-[600px]">
             {/* A. USERS LIST */}
@@ -106,8 +120,8 @@ export default function AdminUsersPage() {
                             <input 
                                 type="text"
                                 placeholder="Cari pasien..."
-                                value={userSearch}
-                                onChange={e => setUserSearch(e.target.value)}
+                                value={usersTable.searchTerm}
+                                onChange={e => usersTable.setSearchTerm(e.target.value)}
                                 className="w-full pl-9 pr-4 py-2 text-xs border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 bg-slate-50/50 font-semibold"
                             />
                         </div>
@@ -117,15 +131,15 @@ export default function AdminUsersPage() {
                         <table className="w-full text-left border-collapse text-sm">
                             <thead>
                                 <tr className="border-b border-slate-100 bg-slate-50/50 text-slate-500 font-bold">
-                                    <th className="p-4">Nama Lengkap</th>
-                                    <th className="p-4">Email</th>
-                                    <th className="p-4">Tanggal Daftar</th>
-                                    <th className="p-4">Total Konsultasi</th>
+                                    <SortableHeader label="Nama Lengkap" sortKey="full_name" currentSort={usersTable.sortConfig} onSort={usersTable.requestSort} />
+                                    <SortableHeader label="Email" sortKey="email" currentSort={usersTable.sortConfig} onSort={usersTable.requestSort} />
+                                    <SortableHeader label="Tanggal Daftar" sortKey="date_joined" currentSort={usersTable.sortConfig} onSort={usersTable.requestSort} />
+                                    <SortableHeader label="Total Konsultasi" sortKey="consultations_count" currentSort={usersTable.sortConfig} onSort={usersTable.requestSort} />
                                     <th className="p-4 text-right">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-50">
-                                {filteredUsers.map(u => (
+                                {usersTable.paginatedData.map(u => (
                                     <tr key={u.id} className="hover:bg-slate-50/50 transition">
                                         <td className="p-4 font-bold text-slate-800">{u.full_name}</td>
                                         <td className="p-4 text-slate-600 font-semibold">{u.email || '-'}</td>
@@ -145,7 +159,7 @@ export default function AdminUsersPage() {
                                         </td>
                                     </tr>
                                 ))}
-                                {filteredUsers.length === 0 && (
+                                {usersTable.paginatedData.length === 0 && (
                                     <tr>
                                         <td colSpan={5} className="p-8 text-center text-slate-400 font-semibold italic">Tidak ada pengguna ditemukan.</td>
                                     </tr>
@@ -153,6 +167,15 @@ export default function AdminUsersPage() {
                             </tbody>
                         </table>
                     </div>
+
+                    <PaginationControls 
+                        currentPage={usersTable.currentPage}
+                        totalPages={usersTable.totalPages}
+                        onPageChange={usersTable.setCurrentPage}
+                        pageSize={usersTable.pageSize}
+                        onPageSizeChange={usersTable.setPageSize}
+                        totalItems={usersTable.totalItems}
+                    />
                 </div>
             )}
 
@@ -170,20 +193,32 @@ export default function AdminUsersPage() {
                     </div>
 
                     <div>
-                        <h3 className="font-black text-sm text-slate-800 mb-4">Riwayat Diagnosis Pasien</h3>
+                        <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-4">
+                            <h3 className="font-black text-sm text-slate-800">Riwayat Diagnosis Pasien</h3>
+                            <div className="relative w-full sm:w-72">
+                                <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+                                <input 
+                                    type="text"
+                                    placeholder="Cari riwayat..."
+                                    value={consultationsTable.searchTerm}
+                                    onChange={e => consultationsTable.setSearchTerm(e.target.value)}
+                                    className="w-full pl-9 pr-4 py-2 text-xs border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 bg-slate-50/50 font-semibold"
+                                />
+                            </div>
+                        </div>
                         <div className="overflow-x-auto rounded-2xl border border-slate-100">
                             <table className="w-full text-left border-collapse text-sm">
                                 <thead>
                                     <tr className="border-b border-slate-100 bg-slate-50/50 text-slate-500 font-bold">
-                                        <th className="p-4">Tanggal</th>
-                                        <th className="p-4">Umur</th>
-                                        <th className="p-4">Diagnosis Utama</th>
-                                        <th className="p-4">Confidence</th>
+                                        <SortableHeader label="Tanggal" sortKey="consultation_date" currentSort={consultationsTable.sortConfig} onSort={consultationsTable.requestSort} />
+                                        <SortableHeader label="Umur" sortKey="age" currentSort={consultationsTable.sortConfig} onSort={consultationsTable.requestSort} />
+                                        <SortableHeader label="Diagnosis Utama" sortKey="final_diagnosis" currentSort={consultationsTable.sortConfig} onSort={consultationsTable.requestSort} />
+                                        <SortableHeader label="Confidence" sortKey="confidence_result" currentSort={consultationsTable.sortConfig} onSort={consultationsTable.requestSort} />
                                         <th className="p-4 text-right">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-slate-50">
-                                    {selectedUser.consultations.map((c: any) => (
+                                    {consultationsTable.paginatedData.map((c: any) => (
                                         <tr key={c.id} className="hover:bg-slate-50/50 transition">
                                             <td className="p-4 text-slate-500 font-semibold">{new Date(c.consultation_date).toLocaleString('id-ID')}</td>
                                             <td className="p-4 text-slate-600 font-semibold">{c.age ? `${c.age} Tahun` : '-'}</td>
@@ -206,7 +241,7 @@ export default function AdminUsersPage() {
                                             </td>
                                         </tr>
                                     ))}
-                                    {selectedUser.consultations.length === 0 && (
+                                    {consultationsTable.paginatedData.length === 0 && (
                                         <tr>
                                             <td colSpan={5} className="p-8 text-center text-slate-400 font-semibold italic">Pasien belum pernah melakukan konsultasi.</td>
                                         </tr>
@@ -214,6 +249,16 @@ export default function AdminUsersPage() {
                                 </tbody>
                             </table>
                         </div>
+
+                        <PaginationControls 
+                            currentPage={consultationsTable.currentPage}
+                            totalPages={consultationsTable.totalPages}
+                            onPageChange={consultationsTable.setCurrentPage}
+                            pageSize={consultationsTable.pageSize}
+                            onPageSizeChange={consultationsTable.setPageSize}
+                            totalItems={consultationsTable.totalItems}
+                            pageSizeOptions={[5, 10, 20]}
+                        />
                     </div>
                 </div>
             )}
@@ -451,18 +496,32 @@ export default function AdminUsersPage() {
                             </div>
                         </div>
 
+                        <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4 mt-6 mb-2">
+                            <h4 className="text-sm font-bold text-slate-800">Tabel Pencocokan</h4>
+                            <div className="relative w-full sm:w-72">
+                                <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+                                <input 
+                                    type="text"
+                                    placeholder="Cari diagnosis atau ID..."
+                                    value={matcherTable.searchTerm}
+                                    onChange={e => matcherTable.setSearchTerm(e.target.value)}
+                                    className="w-full pl-9 pr-4 py-2 text-xs border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white font-semibold"
+                                />
+                            </div>
+                        </div>
+
                         <div className="overflow-x-auto rounded-2xl border border-slate-100">
                             <table className="w-full text-left border-collapse text-xs">
                                 <thead>
                                     <tr className="border-b border-slate-100 bg-slate-50/50 text-slate-500 font-bold">
-                                        <th className="p-3">ID Row</th>
-                                        <th className="p-3">Umur</th>
-                                        <th className="p-3">Diagnosis</th>
+                                        <SortableHeader label="ID Row" sortKey="id" currentSort={matcherTable.sortConfig} onSort={matcherTable.requestSort} className="p-3" />
+                                        <SortableHeader label="Umur" sortKey="age" currentSort={matcherTable.sortConfig} onSort={matcherTable.requestSort} className="p-3" />
+                                        <SortableHeader label="Diagnosis" sortKey="diagnosis" currentSort={matcherTable.sortConfig} onSort={matcherTable.requestSort} className="p-3" />
                                         <th className="p-3">Pencocokan Gejala Aktif</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-slate-100 font-medium">
-                                    {matcherDataset.map(row => {
+                                    {matcherTable.paginatedData.map(row => {
                                         const activeSyms = selectedConsultation.active_symptoms || [];
                                         const matchedCodes = activeSyms.filter((code: string) => {
                                             const key = symptomCodeToKey[code];
@@ -486,26 +545,42 @@ export default function AdminUsersPage() {
                                             </tr>
                                         );
                                     })}
+                                    {matcherTable.paginatedData.length === 0 && (
+                                        <tr>
+                                            <td colSpan={4} className="p-8 text-center text-slate-400 font-semibold italic">Data pencocokan tidak ditemukan.</td>
+                                        </tr>
+                                    )}
                                 </tbody>
                             </table>
                         </div>
 
-                        <div className="flex items-center justify-between border-t border-slate-100 pt-4">
+                        {/* Local Matcher Table Pagination */}
+                        <PaginationControls 
+                            currentPage={matcherTable.currentPage}
+                            totalPages={matcherTable.totalPages}
+                            onPageChange={matcherTable.setCurrentPage}
+                            pageSize={matcherTable.pageSize}
+                            onPageSizeChange={matcherTable.setPageSize}
+                            totalItems={matcherTable.totalItems}
+                        />
+
+                        {/* Server-Side Fetch Pagination */}
+                        <div className="flex flex-col sm:flex-row justify-between items-center mt-6 pt-4 border-t border-slate-200">
                             <p className="text-xs text-slate-500 font-semibold">
-                                Menampilkan <span className="font-bold text-slate-800">{matcherDataset.length}</span> baris
-                                dari total <span className="font-bold text-slate-800">{matcherTotal}</span> baris dataset.
+                                Total Fetch Dataset: <span className="font-bold text-slate-800">{matcherTotal}</span> baris
                             </p>
-                            <div className="flex gap-2">
+                            <div className="flex items-center gap-2 mt-2 sm:mt-0">
                                 <button 
-                                    onClick={() => setMatcherPage(p => Math.max(1, p - 1))}
-                                    disabled={matcherPage === 1}
+                                    onClick={() => setMatcherPage(Math.max(1, matcherPage - 1))}
+                                    disabled={matcherPage <= 1}
                                     className="p-1.5 border border-slate-200 rounded-lg text-slate-500 hover:bg-slate-50 disabled:opacity-50 transition"
                                 >
                                     <ChevronLeft className="w-4 h-4" />
                                 </button>
+                                <span className="text-xs font-bold text-slate-700 px-2">Page {matcherPage}</span>
                                 <button 
-                                    onClick={() => setMatcherPage(p => p + 1)}
-                                    disabled={matcherPage * matcherPageSize >= matcherTotal}
+                                    onClick={() => setMatcherPage(matcherPage + 1)}
+                                    disabled={matcherDataset.length < 100}
                                     className="p-1.5 border border-slate-200 rounded-lg text-slate-500 hover:bg-slate-50 disabled:opacity-50 transition"
                                 >
                                     <ChevronRight className="w-4 h-4" />
