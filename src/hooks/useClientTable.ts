@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 
 type SortConfig<T> = {
-  key: keyof T | '';
+  key: keyof T;
   direction: 'asc' | 'desc';
 } | null;
 
@@ -25,10 +25,11 @@ export function useClientTable<T>(data: T[], searchKeys: (keyof T)[], defaultPag
 
   const sortedData = useMemo(() => {
     let sortableItems = [...filteredData];
-    if (sortConfig !== null && sortConfig.key !== '') {
+    if (sortConfig !== null) {
+      const sortKey = sortConfig.key as keyof T;
       sortableItems.sort((a, b) => {
-        const aVal = a[sortConfig.key];
-        const bVal = b[sortConfig.key];
+        const aVal = a[sortKey];
+        const bVal = b[sortKey];
         
         if (aVal < bVal) return sortConfig.direction === 'asc' ? -1 : 1;
         if (aVal > bVal) return sortConfig.direction === 'asc' ? 1 : -1;
