@@ -22,35 +22,35 @@ Antarmuka web modern untuk sistem pakar diagnosis awal Infeksi Saluran Pernapasa
 
 ## Tech Stack
 
-| Komponen | Teknologi |
-|----------|-----------|
-| Framework | Next.js 16 (App Router) |
-| Language | TypeScript |
-| Styling | Tailwind CSS (dark-mode premium design) |
-| HTTP Client | Axios |
-| State Management | React useState / useEffect |
-| Chart | Recharts |
-| Icons | Lucide React |
-| Font | Google Fonts (Inter / Outfit) |
+| Komponen         | Teknologi                               |
+| ---------------- | --------------------------------------- |
+| Framework        | Next.js 16 (App Router)                 |
+| Language         | TypeScript                              |
+| Styling          | Tailwind CSS (dark-mode premium design) |
+| HTTP Client      | Axios                                   |
+| State Management | React useState / useEffect              |
+| Chart            | Recharts                                |
+| Icons            | Lucide React                            |
+| Font             | Google Fonts (Inter / Outfit)           |
 
 ---
 
 ## Struktur Halaman
 
-| Route | Halaman | Akses |
-|-------|---------|-------|
-| `/` | Landing Page (Hero, Fitur, Statistik, Testimonial) | Public |
-| `/login` | Halaman Login | Public |
-| `/register` | Halaman Registrasi | Public |
-| `/dashboard` | Dashboard pasien (riwayat konsultasi) | User |
-| `/consultation` | Form konsultasi — pilih gejala + intensitas | User |
-| `/result` | Hasil diagnosis + trace perhitungan | User |
-| `/admin` | Dashboard admin (statistik global) | Admin |
-| `/admin/users` | Daftar pengguna + detail konsultasi + modal perhitungan CF | Admin |
-| `/admin/symptoms` | CRUD katalog gejala | Admin |
-| `/admin/diseases` | CRUD katalog penyakit | Admin |
-| `/admin/dataset` | Manajemen dataset rekam medis | Admin |
-| `/admin/matrix` | Heatmap matriks Certainty Factor | Admin |
+| Route             | Halaman                                                    | Akses  |
+| ----------------- | ---------------------------------------------------------- | ------ |
+| `/`               | Landing Page (Hero, Fitur, Statistik, Testimonial)         | Public |
+| `/login`          | Halaman Login                                              | Public |
+| `/register`       | Halaman Registrasi                                         | Public |
+| `/dashboard`      | Dashboard pasien (riwayat konsultasi)                      | User   |
+| `/consultation`   | Form konsultasi — pilih gejala + intensitas                | User   |
+| `/result`         | Hasil diagnosis + trace perhitungan                        | User   |
+| `/admin`          | Dashboard admin (statistik global)                         | Admin  |
+| `/admin/users`    | Daftar pengguna + detail konsultasi + modal perhitungan CF | Admin  |
+| `/admin/symptoms` | CRUD katalog gejala                                        | Admin  |
+| `/admin/diseases` | CRUD katalog penyakit                                      | Admin  |
+| `/admin/dataset`  | Manajemen dataset rekam medis                              | Admin  |
+| `/admin/matrix`   | Heatmap matriks Certainty Factor                           | Admin  |
 
 ---
 
@@ -58,7 +58,7 @@ Antarmuka web modern untuk sistem pakar diagnosis awal Infeksi Saluran Pernapasa
 
 ### 1. Landing Page (Dashboard Publik)
 
-![Dashboard](image1.png)
+![Dashboard](blob/main/image1.png)
 
 > Tampilan utama aplikasi yang berisi hero section, statistik sistem (total pasien, konsultasi, rata-rata confidence), distribusi penyakit, fitur unggulan, dan testimonial pengguna.
 
@@ -66,7 +66,7 @@ Antarmuka web modern untuk sistem pakar diagnosis awal Infeksi Saluran Pernapasa
 
 ### 2. Halaman Login
 
-![Login](image2.png)
+![Login](blob/main/image2.png)
 
 > Form login dengan validasi, desain glassmorphism, dan animasi micro-interaction. Mendukung JWT authentication.
 
@@ -74,9 +74,10 @@ Antarmuka web modern untuk sistem pakar diagnosis awal Infeksi Saluran Pernapasa
 
 ### 3. Form Konsultasi
 
-![Konsultasi](image3.png)
+![Konsultasi](blob/main/image3.png)
 
 > Pasien memilih gejala yang dialami dari 16 gejala ISPA yang tersedia. Setiap gejala memiliki 5 tingkat intensitas:
+>
 > - `0.2` — Sangat Ringan
 > - `0.4` — Ringan
 > - `0.6` — Sedang
@@ -89,9 +90,10 @@ Antarmuka web modern untuk sistem pakar diagnosis awal Infeksi Saluran Pernapasa
 
 ### 4. Hasil Diagnosis
 
-![Hasil](image4.png)
+![Hasil](blob/main/image4.png)
 
 > Menampilkan:
+>
 > - Penyakit terdiagnosis beserta confidence score (%)
 > - Daftar gejala yang cocok
 > - Rekomendasi penanganan & solusi pengobatan
@@ -102,9 +104,10 @@ Antarmuka web modern untuk sistem pakar diagnosis awal Infeksi Saluran Pernapasa
 
 ### 5. Dashboard Admin — Statistik Global
 
-![Admin Dashboard](image5.png)
+![Admin Dashboard](blob/main/image5.png)
 
 > Halaman administrasi yang menampilkan:
+>
 > - Total pasien & konsultasi
 > - Rata-rata confidence diagnosis
 > - Grafik distribusi penyakit (Bar Chart)
@@ -116,9 +119,10 @@ Antarmuka web modern untuk sistem pakar diagnosis awal Infeksi Saluran Pernapasa
 
 ### 6. Admin — Daftar Pengguna & Riwayat Konsultasi
 
-![Admin Users](image6.png)
+![Admin Users](blob/main/image6.png)
 
 > Menampilkan seluruh pengguna terdaftar beserta:
+>
 > - Riwayat konsultasi lengkap
 > - Scatter plot per pengguna
 > - Dataset rows yang paling cocok
@@ -128,9 +132,10 @@ Antarmuka web modern untuk sistem pakar diagnosis awal Infeksi Saluran Pernapasa
 
 ### 7. Modal Detail Perhitungan CF
 
-![Modal CF](image7.png)
+![Modal CF](blob/main/image7.png)
 
 > Modal interaktif yang menampilkan **jejak kalkulasi** untuk setiap penyakit kandidat:
+>
 > - Nama gejala yang dievaluasi
 > - Rumus CF current: `CF = user_cf × expert_cf`
 > - Rumus kombinasi CF MYCIN: `CF_combined = CF1 + CF2 × (1 - CF1)`
@@ -140,7 +145,7 @@ Antarmuka web modern untuk sistem pakar diagnosis awal Infeksi Saluran Pernapasa
 
 ### 8. Admin — Matriks Certainty Factor
 
-![Matriks CF](image8.png)
+![Matriks CF](blob/main/image8.png)
 
 > Heatmap interaktif yang menampilkan nilai `expert_cf` untuk setiap kombinasi penyakit × gejala. Semakin gelap warnanya, semakin tinggi nilai CF-nya.
 
@@ -148,9 +153,10 @@ Antarmuka web modern untuk sistem pakar diagnosis awal Infeksi Saluran Pernapasa
 
 ### 9. Admin — Dataset Rekam Medis
 
-![Dataset](image9.png)
+![Dataset](blob/main/image9.png)
 
 > Tabel paginasi berisi semua baris dataset yang digunakan untuk training sistem. Admin dapat:
+>
 > - Melihat data per halaman (konfigurasi page size)
 > - Menambah baris data baru
 > - Menghapus baris data
@@ -247,27 +253,27 @@ src/
 
 ### Untuk Pasien (User)
 
-| Fitur | Deskripsi |
-|-------|-----------|
-| 🩺 **Konsultasi Online** | Pilih gejala dari katalog 16 gejala ISPA dengan 5 level intensitas |
-| 📊 **Hasil Diagnosis** | Tampil penyakit + confidence score + rekomendasi pengobatan |
-| 🔬 **Trace Perhitungan** | Lihat langkah-langkah rumus CF yang menghasilkan diagnosis |
-| 📋 **Riwayat Konsultasi** | Semua konsultasi sebelumnya tersimpan dan bisa diakses kembali |
-| 💬 **Chat dengan Dokter** | Tanya jawab langsung dengan admin/dokter melalui fitur chat |
-| ⭐ **Testimonial** | Berikan ulasan pengalaman menggunakan sistem |
+| Fitur                     | Deskripsi                                                          |
+| ------------------------- | ------------------------------------------------------------------ |
+| 🩺 **Konsultasi Online**  | Pilih gejala dari katalog 16 gejala ISPA dengan 5 level intensitas |
+| 📊 **Hasil Diagnosis**    | Tampil penyakit + confidence score + rekomendasi pengobatan        |
+| 🔬 **Trace Perhitungan**  | Lihat langkah-langkah rumus CF yang menghasilkan diagnosis         |
+| 📋 **Riwayat Konsultasi** | Semua konsultasi sebelumnya tersimpan dan bisa diakses kembali     |
+| 💬 **Chat dengan Dokter** | Tanya jawab langsung dengan admin/dokter melalui fitur chat        |
+| ⭐ **Testimonial**        | Berikan ulasan pengalaman menggunakan sistem                       |
 
 ### Untuk Admin
 
-| Fitur | Deskripsi |
-|-------|-----------|
-| 📈 **Dashboard Statistik** | Grafik distribusi penyakit, tren konsultasi, scatter plot |
-| 👥 **Manajemen Pengguna** | Lihat semua user + riwayat konsultasi + detail perhitungan CF |
-| 🔬 **Modal CF Detail** | Trace step-by-step rumus MYCIN per konsultasi |
-| 🗂️ **Dataset Management** | Upload, lihat, hapus baris rekam medis |
-| ⚡ **Training Ulang** | Trigger ulang Knowledge Acquisition dari dataset terbaru |
-| 🌡️ **Matriks CF** | Heatmap visualisasi expert_cf (penyakit × gejala) |
-| 🦠 **CRUD Penyakit** | Kelola katalog penyakit beserta deskripsi & solusi pengobatan |
-| 💊 **CRUD Gejala** | Kelola katalog gejala ISPA |
+| Fitur                      | Deskripsi                                                     |
+| -------------------------- | ------------------------------------------------------------- |
+| 📈 **Dashboard Statistik** | Grafik distribusi penyakit, tren konsultasi, scatter plot     |
+| 👥 **Manajemen Pengguna**  | Lihat semua user + riwayat konsultasi + detail perhitungan CF |
+| 🔬 **Modal CF Detail**     | Trace step-by-step rumus MYCIN per konsultasi                 |
+| 🗂️ **Dataset Management**  | Upload, lihat, hapus baris rekam medis                        |
+| ⚡ **Training Ulang**      | Trigger ulang Knowledge Acquisition dari dataset terbaru      |
+| 🌡️ **Matriks CF**          | Heatmap visualisasi expert_cf (penyakit × gejala)             |
+| 🦠 **CRUD Penyakit**       | Kelola katalog penyakit beserta deskripsi & solusi pengobatan |
+| 💊 **CRUD Gejala**         | Kelola katalog gejala ISPA                                    |
 
 ---
 
